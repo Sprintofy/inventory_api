@@ -13,6 +13,7 @@ router.get('/requests', operationsController.listRequests);
 router.post('/requests', operationsController.createRequest);
 router.put('/requests/:id', operationsController.updateRequest);
 
+router.get('/bootstrap', systemController.bootstrap);
 router.get('/activities', systemController.listActivities);
 router.post('/activities', systemController.createActivity);
 

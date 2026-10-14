@@ -22,6 +22,10 @@ class TicketModel extends BaseModel {
         return await this._executeQuery("SELECT * FROM ticket_issues WHERE ticket_id = ? ORDER BY created_at ASC;", [ticketId]);
     }
 
+    async listAllIssues() {
+        return await this._executeQuery("SELECT * FROM ticket_issues ORDER BY created_at ASC;", []);
+    }
+
     async createIssue(data: any) {
         return await this._executeQuery("INSERT INTO ticket_issues SET ?;", [data]);
     }

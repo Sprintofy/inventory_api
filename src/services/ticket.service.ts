@@ -21,12 +21,14 @@ const log = async (req: any, action: string, module: string, item: string, depar
 };
 
 const withIssues = async (rows: any[]) => {
-    const out = [];
-    for (const r of rows) {
-        const issues: any = await ticketModel.listIssues(r.id);
-        out.push(toTicket(r, issues.map(toIssue)));
+    const all: any = await ticketModel.listAllIssues();
+    const byTicket = new Map<string, any[]>();
+    for (const r of all) {
+        const list = byTicket.get(r.ticket_id) || [];
+        list.push(toIssue(r));
+        byTicket.set(r.ticket_id, list);
     }
-    return out;
+    return rows.map((r: any) => toTicket(r, byTicket.get(r.id) || []));
 };
 
 const list = async () => {
