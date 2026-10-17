@@ -36,6 +36,13 @@ CREATE TABLE users (
   INDEX idx_users_department (department)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+INSERT INTO users (id, name, email, password_hash, employee_id, department, sub_department, post, role, status, color, last_active, created_at) VALUES
+('usr_001', 'Admin User', 'admin@company.com', '$2b$10$dummyhashplaceholderadmin', 'EMP-0001', 'IT', NULL, 'System Administrator', 'admin', 'active', '#4f46e5', '2026-10-17 09:00:00', '2026-10-17 09:00:00'),
+('usr_002', 'Sarah Manager', 'sarah.manager@company.com', '$2b$10$dummyhashplaceholdermgr', 'EMP-0002', 'Operations', 'Warehouse', 'Warehouse Manager', 'manager', 'active', '#059669', '2026-10-17 09:15:00', '2026-10-17 09:15:00'),
+('usr_003', 'Mike Staff', 'mike.staff@company.com', '$2b$10$dummyhashplaceholderstaff', 'EMP-0003', 'Operations', 'Warehouse', 'Stock Clerk', 'user', 'active', '#d97706', '2026-10-17 09:30:00', '2026-10-17 09:30:00'),
+('usr_004', 'Elena Procurement', 'elena.procurement@company.com', '$2b$10$dummyhashplaceholderproc', 'EMP-0004', 'Procurement', NULL, 'Procurement Officer', 'user', 'active', '#7c3aed', '2026-10-17 09:45:00', '2026-10-17 09:45:00'),
+('usr_005', 'David Finance', 'david.finance@company.com', '$2b$10$dummyhashplaceholderfin', 'EMP-0005', 'Finance', NULL, 'Finance Analyst', 'user', 'active', '#dc2626', '2026-10-17 10:00:00', '2026-10-17 10:00:00');
+
 CREATE TABLE technicians (
   id VARCHAR(32) PRIMARY KEY,
   name VARCHAR(191) NOT NULL,
