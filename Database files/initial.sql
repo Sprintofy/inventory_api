@@ -36,6 +36,36 @@ CREATE TABLE users (
   INDEX idx_users_department (department)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+INSERT INTO `users` (
+  `id`,
+  `name`,
+  `email`,
+  `password_hash`,
+  `employee_id`,
+  `department`,
+  `sub_department`,
+  `post`,
+  `role`,
+  `status`,
+  `color`,
+  `last_active`,
+  `created_at`
+) VALUES (
+  'USR-001',
+  'Manish Jawale',
+  'admin@gmail.com',
+  'scrypt$afdf52eee715529b407b057e3b01ba01$4899023937a3628cd46b164663578dc334e155f99cc111e5229b0e6df8f47ba6719f697ffd66e85c82b958379ac72a47622af466a4c95c504d522dcaca5d9f25',
+  'EMP-0001',
+  'ADM BR',
+  NULL,
+  NULL,
+  'super-admin',
+  'active',
+  '#4f46e5',
+  '2026-10-14 17:41:29',
+  CURRENT_TIMESTAMP
+);
+
 CREATE TABLE technicians (
   id VARCHAR(32) PRIMARY KEY,
   name VARCHAR(191) NOT NULL,
