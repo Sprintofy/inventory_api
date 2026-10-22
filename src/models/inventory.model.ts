@@ -22,8 +22,33 @@ class InventoryModel extends BaseModel {
         return await this._executeQuery("UPDATE inventory_items SET ? WHERE id = ?;", [data, id]);
     }
 
-    async listStockIn() {
-        return await this._executeQuery("SELECT * FROM stock_in_records ORDER BY date DESC;", []);
+    async listStockIn(filters: any = {}) {
+        const { dateFrom, dateTo, status, supplier, search } = filters;
+        let sql = "SELECT * FROM stock_in_records WHERE 1=1";
+        const params: any[] = [];
+        if (dateFrom) {
+            sql += " AND date >= ?";
+            params.push(dateFrom);
+        }
+        if (dateTo) {
+            sql += " AND date <= ?";
+            params.push(dateTo + " 23:59:59");
+        }
+        if (status && status !== "all") {
+            sql += " AND status = ?";
+            params.push(status);
+        }
+        if (supplier && supplier !== "all") {
+            sql += " AND supplier = ?";
+            params.push(supplier);
+        }
+        if (search) {
+            sql += " AND (item_name LIKE ? OR reference LIKE ? OR supplier LIKE ? OR created_by LIKE ?)";
+            const like = `%${search}%`;
+            params.push(like, like, like, like);
+        }
+        sql += " ORDER BY date ASC";
+        return await this._executeQuery(sql, params);
     }
 
     async createStockIn(data: any) {
@@ -34,8 +59,29 @@ class InventoryModel extends BaseModel {
         return await this._executeQuery("UPDATE stock_in_records SET status = ? WHERE id = ?;", [status, id]);
     }
 
-    async listStockOut() {
-        return await this._executeQuery("SELECT * FROM stock_out_records ORDER BY date DESC;", []);
+    async listStockOut(filters: any = {}) {
+        const { dateFrom, dateTo, status, search } = filters;
+        let sql = "SELECT * FROM stock_out_records WHERE 1=1";
+        const params: any[] = [];
+        if (dateFrom) {
+            sql += " AND date >= ?";
+            params.push(dateFrom);
+        }
+        if (dateTo) {
+            sql += " AND date <= ?";
+            params.push(dateTo + " 23:59:59");
+        }
+        if (status && status !== "all") {
+            sql += " AND status = ?";
+            params.push(status);
+        }
+        if (search) {
+            sql += " AND (item_name LIKE ? OR reference LIKE ? OR purpose LIKE ?)";
+            const like = `%${search}%`;
+            params.push(like, like, like);
+        }
+        sql += " ORDER BY date ASC";
+        return await this._executeQuery(sql, params);
     }
 
     async createStockOut(data: any) {

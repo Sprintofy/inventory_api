@@ -31,8 +31,5 @@ export default {
     updateIssue: run(ticketService.updateIssue),
     removeIssue: run(ticketService.removeIssue),
     close: run(ticketService.close),
-    reissue: run(ticketService.reissue),
-    assign: run(ticketService.assign),
     remark: run(ticketService.remark),
-    submitSolution: run(ticketService.submitSolution),
 }

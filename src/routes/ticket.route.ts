@@ -13,10 +13,7 @@ router.put('/:id/issues/:issueId', ticketController.updateIssue);
 router.delete('/:id/issues/:issueId', ticketController.removeIssue);
 
 router.post('/:id/close', ticketController.close);
-router.post('/:id/reissue', ticketController.reissue);
-router.put('/:id/assign', ticketController.assign);
 router.put('/:id/remark', ticketController.remark);
-router.post('/:id/submit', ticketController.submitSolution);
 
 
 export default router;

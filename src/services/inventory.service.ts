@@ -131,13 +131,28 @@ const stockOut = async (req: any) => {
     return { item: toItem(updated[0]), transaction: toTransaction(txn), record: toStockOut(record), activity: toActivity(act) };
 };
 
-const listStockIn = async () => {
-    const rows: any = await inventoryModel.listStockIn();
+const listStockIn = async (req: any) => {
+    const q = req.query || {};
+    const filters = {
+        dateFrom: q.dateFrom,
+        dateTo: q.dateTo,
+        status: q.status,
+        supplier: q.supplier,
+        search: q.search,
+    };
+    const rows: any = await inventoryModel.listStockIn(filters);
     return rows.map(toStockIn);
 };
 
-const listStockOut = async () => {
-    const rows: any = await inventoryModel.listStockOut();
+const listStockOut = async (req: any) => {
+    const q = req.query || {};
+    const filters = {
+        dateFrom: q.dateFrom,
+        dateTo: q.dateTo,
+        status: q.status,
+        search: q.search,
+    };
+    const rows: any = await inventoryModel.listStockOut(filters);
     return rows.map(toStockOut);
 };
 
