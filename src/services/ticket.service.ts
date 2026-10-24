@@ -351,7 +351,12 @@ const remark = async (req: any) => {
 
 const getTicketHistory = async (req: any) => {
     const rows: any = await ticketModel.getTicketHistory(req.query.itemId);
-    return rows.map((r: any) => toTicket(r, []));
+    const result: any[] = [];
+    for (const r of rows) {
+        const issRows: any = await ticketModel.listIssues(r.id);
+        result.push(toTicket(r, issRows.map(toIssue)));
+    }
+    return result;
 };
 
 export default {
