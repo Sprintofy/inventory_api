@@ -11,10 +11,12 @@ router.put('/items/:id', inventoryController.updateItem);
 router.get('/stock-in', inventoryController.listStockIn);
 router.post('/stock-in', inventoryController.stockIn);
 router.put('/stock-in/:id/status', inventoryController.setStockInStatus);
+router.get('/stock-in/history', inventoryController.getStockInHistory);
 
 router.get('/stock-out', inventoryController.listStockOut);
 router.post('/stock-out', inventoryController.stockOut);
 router.put('/stock-out/:id/status', inventoryController.setStockOutStatus);
+router.get('/stock-out/history', inventoryController.getStockOutHistory);
 
 router.get('/transactions', inventoryController.listTransactions);
 

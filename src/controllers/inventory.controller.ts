@@ -34,4 +34,6 @@ export default {
     listTransactions: run(inventoryService.listTransactions),
     setStockInStatus: run(inventoryService.setStockInStatus),
     setStockOutStatus: run(inventoryService.setStockOutStatus),
+    getStockInHistory: run(inventoryService.getStockInHistory),
+    getStockOutHistory: run(inventoryService.getStockOutHistory),
 }

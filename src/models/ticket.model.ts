@@ -37,6 +37,13 @@ class TicketModel extends BaseModel {
     async deleteIssue(id: string) {
         return await this._executeQuery("DELETE FROM ticket_issues WHERE id = ?;", [id]);
     }
+
+    async getTicketHistory(itemId: string) {
+        return await this._executeQuery(
+            "SELECT * FROM tickets WHERE JSON_CONTAINS(item_ids, CAST(? AS JSON)) ORDER BY created_at DESC;",
+            [`"${itemId}"`],
+        );
+    }
 }
 
 export default new TicketModel()

@@ -99,6 +99,14 @@ class InventoryModel extends BaseModel {
     async createTransaction(data: any) {
         return await this._executeQuery("INSERT INTO stock_transactions SET ?;", [data]);
     }
+
+    async getStockInHistory(itemId: string) {
+        return await this._executeQuery("SELECT * FROM stock_in_records WHERE item_id = ? ORDER BY date DESC;", [itemId]);
+    }
+
+    async getStockOutHistory(itemId: string) {
+        return await this._executeQuery("SELECT * FROM stock_out_records WHERE item_id = ? ORDER BY date DESC;", [itemId]);
+    }
 }
 
 export default new InventoryModel()

@@ -14,6 +14,7 @@ router.delete('/:id/issues/:issueId', ticketController.removeIssue);
 
 router.post('/:id/close', ticketController.close);
 router.put('/:id/remark', ticketController.remark);
+router.get('/history', ticketController.getTicketHistory);
 
 
 export default router;

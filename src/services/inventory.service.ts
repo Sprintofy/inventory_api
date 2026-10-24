@@ -173,6 +173,16 @@ const setStockOutStatus = async (req: any) => {
     return { id: req.params.id, status: b.status };
 };
 
+const getStockInHistory = async (req: any) => {
+    const rows: any = await inventoryModel.getStockInHistory(req.query.itemId);
+    return rows.map(toStockIn);
+};
+
+const getStockOutHistory = async (req: any) => {
+    const rows: any = await inventoryModel.getStockOutHistory(req.query.itemId);
+    return rows.map(toStockOut);
+};
+
 export default {
     listItems,
     createItem,
@@ -184,4 +194,6 @@ export default {
     listTransactions,
     setStockInStatus,
     setStockOutStatus,
+    getStockInHistory,
+    getStockOutHistory,
 }

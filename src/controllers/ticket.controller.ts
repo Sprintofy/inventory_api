@@ -32,4 +32,5 @@ export default {
     removeIssue: run(ticketService.removeIssue),
     close: run(ticketService.close),
     remark: run(ticketService.remark),
+    getTicketHistory: run(ticketService.getTicketHistory),
 }
