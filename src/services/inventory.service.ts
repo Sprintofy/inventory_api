@@ -15,6 +15,12 @@ const activityRow = (a: any) => ({
     date: sqlDate(a.date),
 });
 
+const getNextStockOutId = async (): Promise<string> => {
+    const maxStockOut = await inventoryModel.getMaxId("stock_out_records", "id");
+    const maxSouNum = parseInt(String(maxStockOut.maxId).replace("SOU-", "")) || 0;
+    return (maxSouNum + 1).toString().padStart(3, '0');
+};
+
 const listItems = async () => {
     const rows: any = await inventoryModel.listItems();
     return rows.map(toItem);
@@ -115,10 +121,9 @@ const stockOut = async (req: any) => {
     const qty = Math.max(0, asNumber(item.quantity) - asNumber(b.quantity));
     const now = sqlDate(new Date());
 
-    // Generate sequential stock out ID (001, 002, 003...)
-    const maxStockOut = await inventoryModel.getMaxId("stock_out_records", "id");
-    const maxSouNum = parseInt(String(maxStockOut.maxId).replace("SOU-", "")) || 0;
-    const stockOutId = (maxSouNum + 1).toString().padStart(3, '0');
+    // Use the same ID as the most recent Stock In for this item (if exists)
+    const stockInRows: any = await inventoryModel.getLatestStockInByItemId(item.id);
+    const stockOutId = stockInRows.length > 0 ? stockInRows[0].id : await getNextStockOutId();
 
     await inventoryModel.updateItem(item.id, { quantity: qty, last_updated: now });
     const txn = {
