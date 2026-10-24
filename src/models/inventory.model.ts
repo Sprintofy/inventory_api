@@ -107,6 +107,14 @@ class InventoryModel extends BaseModel {
     async getStockOutHistory(itemId: string) {
         return await this._executeQuery("SELECT * FROM stock_out_records WHERE item_id = ? ORDER BY date DESC;", [itemId]);
     }
+
+    async findDepartmentByName(name: string) {
+        return await this._executeQuery("SELECT * FROM departments WHERE name = ? LIMIT 1;", [name]);
+    }
+
+    async getLatestStockInByItemId(itemId: string) {
+        return await this._executeQuery("SELECT * FROM stock_in_records WHERE item_id = ? ORDER BY date DESC LIMIT 1;", [itemId]);
+    }
 }
 
 export default new InventoryModel()

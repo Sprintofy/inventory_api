@@ -78,6 +78,12 @@ const stockIn = async (req: any) => {
     const item = itemRows[0];
     const qty = asNumber(item.quantity) + asNumber(b.quantity);
     const now = sqlDate(new Date());
+
+    // Generate sequential stock in ID (001, 002, 003...)
+    const maxStockIn = await inventoryModel.getMaxId("stock_in_records", "id");
+    const maxSiNum = parseInt(String(maxStockIn.maxId).replace("SI-", "")) || 0;
+    const stockInId = (maxSiNum + 1).toString().padStart(3, '0');
+
     await inventoryModel.updateItem(item.id, { quantity: qty, last_updated: now });
     const txn = {
         id: b.txnId || b.txn_id || `TXN-${Date.now()}`,
@@ -88,7 +94,7 @@ const stockIn = async (req: any) => {
     };
     await inventoryModel.createTransaction(txn);
     const record = {
-        id: b.recordId || b.record_id || `SI-${Date.now()}`,
+        id: b.recordId || b.record_id || stockInId,
         reference: b.ref || b.reference || "", date: now, supplier: b.supplier || "",
         item_id: item.id, item_name: item.device_name, items_count: 1, quantity: asNumber(b.quantity),
         department: item.department || "", created_by: by(req), status: "received",
@@ -108,6 +114,12 @@ const stockOut = async (req: any) => {
     if (asNumber(b.quantity) > asNumber(item.quantity)) throw new Error(`Insufficient stock — only ${item.quantity} available`);
     const qty = Math.max(0, asNumber(item.quantity) - asNumber(b.quantity));
     const now = sqlDate(new Date());
+
+    // Generate sequential stock out ID (001, 002, 003...)
+    const maxStockOut = await inventoryModel.getMaxId("stock_out_records", "id");
+    const maxSouNum = parseInt(String(maxStockOut.maxId).replace("SOU-", "")) || 0;
+    const stockOutId = (maxSouNum + 1).toString().padStart(3, '0');
+
     await inventoryModel.updateItem(item.id, { quantity: qty, last_updated: now });
     const txn = {
         id: b.txnId || `TXN-${Date.now()}`,
@@ -118,7 +130,7 @@ const stockOut = async (req: any) => {
     };
     await inventoryModel.createTransaction(txn);
     const record = {
-        id: b.recordId || `SOU-${Date.now()}`,
+        id: b.recordId || b.record_id || stockOutId,
         reference: b.ref || b.reference || "", date: now,
         item_id: item.id, item_name: item.device_name,
         recipient: b.recipient || "", department: item.department || "",

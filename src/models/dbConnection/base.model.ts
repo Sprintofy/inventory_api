@@ -32,6 +32,11 @@ class BaseModel {
     async _releaseConnection(sqlConnection: Connection) {
         return await mysql.releaseConnection(sqlConnection);
     }
+
+    async getMaxId(table: string, column: string): Promise<{ maxId: string | null }> {
+        const rows: any = await this._executeQuery(`SELECT MAX(${column}) as maxId FROM ${table}`, []);
+        return rows[0];
+    }
 }
 
 export default BaseModel;

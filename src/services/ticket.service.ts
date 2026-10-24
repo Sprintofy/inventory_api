@@ -1,9 +1,6 @@
 'use strict';
-
 import ticketModel from '../models/ticket.model';
-
 import systemModel from '../models/system.model';
-
 import { toTicket, toIssue, toActivity, asNumber, sqlDate } from "./mappers";
 
 
@@ -130,7 +127,12 @@ const create = async (req: any) => {
 
     const now = sqlDate(new Date());
 
-    const row = toRow({ ...b, createdBy: byName(req), createdAt: now, status: "open" });
+    // Generate sequential ticket ID (001, 002, 003...)
+    const maxTicket = await ticketModel.getMaxId("tickets", "id");
+    const maxNum = parseInt(String(maxTicket.maxId).replace("TKT-", "")) || 0;
+    const ticketId = `TKT-${(maxNum + 1).toString().padStart(3, '0')}`;
+
+    const row = toRow({ ...b, id: ticketId, createdBy: byName(req), createdAt: now, status: "open" });
 
     await ticketModel.createTicket(row);
 
