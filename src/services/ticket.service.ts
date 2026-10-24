@@ -1,5 +1,6 @@
 'use strict';
 import ticketModel from '../models/ticket.model';
+import inventoryModel from '../models/inventory.model';
 import systemModel from '../models/system.model';
 import { toTicket, toIssue, toActivity, asNumber, sqlDate } from "./mappers";
 
@@ -126,11 +127,18 @@ const create = async (req: any) => {
     const b = req.body || {};
 
     const now = sqlDate(new Date());
+    const yy = now.slice(2, 4); // last 2 digits of year
 
-    // Generate sequential ticket ID (001, 002, 003...)
-    const maxTicket = await ticketModel.getMaxId("tickets", "id");
-    const maxNum = parseInt(String(maxTicket.maxId).replace("TKT-", "")) || 0;
-    const ticketId = `TKT-${(maxNum + 1).toString().padStart(3, '0')}`;
+    // Get department code from departments table
+    const deptRows: any = await inventoryModel.findDepartmentByName(b.department || "");
+    const deptCode = deptRows.length > 0 ? deptRows[0].code : (b.department || "ADM");
+
+    // Get next sequence for this department
+    const seqRows: any = await ticketModel.getMaxTicketSeq(deptCode);
+    const seq = ((seqRows.length > 0 && seqRows[0].maxSeq) ? parseInt(seqRows[0].maxSeq) : 0) + 1;
+    const seqStr = seq.toString().padStart(3, '0');
+
+    const ticketId = `${deptCode}/${seqStr}/${yy}`;
 
     const row = toRow({ ...b, id: ticketId, createdBy: byName(req), createdAt: now, status: "open" });
 

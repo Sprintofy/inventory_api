@@ -44,6 +44,13 @@ class TicketModel extends BaseModel {
             [`"${itemId}"`],
         );
     }
+
+    async getMaxTicketSeq(deptCode: string) {
+        return await this._executeQuery(
+            "SELECT MAX(CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(id, '/', 2), '/', -1) AS UNSIGNED)) as maxSeq FROM tickets WHERE id LIKE ?;",
+            [`${deptCode}/%`],
+        );
+    }
 }
 
 export default new TicketModel()
