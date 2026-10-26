@@ -84,11 +84,18 @@ const stockIn = async (req: any) => {
     const item = itemRows[0];
     const qty = asNumber(item.quantity) + asNumber(b.quantity);
     const now = sqlDate(new Date());
+    const yy = now.slice(2, 4); // last 2 digits of year
 
-    // Generate sequential stock in ID (001, 002, 003...)
-    const maxStockIn = await inventoryModel.getMaxId("stock_in_records", "id");
-    const maxSiNum = parseInt(String(maxStockIn.maxId).replace("SI-", "")) || 0;
-    const stockInId = (maxSiNum + 1).toString().padStart(3, '0');
+    // Get department code
+    const deptRows: any = await inventoryModel.findDepartmentByName(item.department || "");
+    const deptCode = deptRows.length > 0 ? deptRows[0].code : (item.department || "ADM");
+
+    // Get count of stock ins for this department today for sequence
+    const todayStr = now.slice(0, 10); // YYYY-MM-DD
+    const todayStockIns = await inventoryModel.getStockInByDepartmentAndDate(deptCode, todayStr);
+    const seqNum = todayStockIns.length + 1;
+
+    const stockInId = `NDA/${deptCode}/${yy}/${seqNum.toString().padStart(3, '0')}`;
 
     await inventoryModel.updateItem(item.id, { quantity: qty, last_updated: now });
     const txn = {

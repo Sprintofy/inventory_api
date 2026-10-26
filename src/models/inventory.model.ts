@@ -115,6 +115,13 @@ class InventoryModel extends BaseModel {
     async getLatestStockInByItemId(itemId: string) {
         return await this._executeQuery("SELECT * FROM stock_in_records WHERE item_id = ? ORDER BY date DESC LIMIT 1;", [itemId]);
     }
+
+    async getStockInByDepartmentAndDate(deptCode: string, date: string) {
+        return await this._executeQuery(
+            "SELECT * FROM stock_in_records WHERE id LIKE ? AND date = ? ORDER BY id ASC;",
+            [`NDA/${deptCode}/${date.slice(2, 4)}/%`, date]
+        );
+    }
 }
 
 export default new InventoryModel()
