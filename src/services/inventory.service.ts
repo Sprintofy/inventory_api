@@ -147,7 +147,7 @@ const stockIn = async (req: any) => {
   };
   await inventoryModel.createTransaction(txn);
   const record = {
-    id: b.recordId || b.record_id || stockInId,
+    id: stockInId,
     reference: b.ref || b.reference || "",
     date: now,
     supplier: b.supplier || "",
@@ -189,33 +189,12 @@ const stockOut = async (req: any) => {
   const qty = Math.max(0, asNumber(item.quantity) - asNumber(b.quantity));
   const now = sqlDate(new Date());
 
-  // Use the same ID as the most recent Stock In for this item (if exists)
-  const stockInRows: any = await inventoryModel.getLatestStockInByItemId(
-    item.id,
-  );
-
   await inventoryModel.updateItem(item.id, {
     quantity: qty,
     last_updated: now,
   });
 
-  const yy = now.slice(2, 4); // last 2 digits of year
-
-  const deptRows: any = await inventoryModel.findDepartmentByName(
-    item.department || "",
-  );
-  const deptCode =
-    deptRows.length > 0 ? deptRows[0].code : item.department || "ADM";
-
-  // Get count of stock ins for this department today for sequence
-  const todayStr = now.slice(0, 10); // YYYY-MM-DD
-  const todayStockIns = await inventoryModel.getStockInByDepartmentAndDate(
-    deptCode,
-    todayStr,
-  );
-  const seqNum = todayStockIns.length + 1;
-
-  const stockOutId = `NDA/${deptCode}/${yy}/${seqNum.toString().padStart(3, "0")}`;
+  const stockOutId = b.id;
   const txn = {
     id: stockOutId,
     type: "stock-out",
