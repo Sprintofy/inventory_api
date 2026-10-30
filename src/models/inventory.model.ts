@@ -65,7 +65,7 @@ class InventoryModel extends BaseModel {
 
     async stockOut(id: any, remarks: any) {
         return await this._executeQuery(
-            "UPDATE stock_in_records SET date_out = NOW(), remarks = ?, status = 'issued' WHERE id = ?;",
+            "UPDATE stock_in_records SET date_out = NOW(), remarks = ?, status = 'Sent' WHERE id = ?;",
             [remarks, id],
         );
     }

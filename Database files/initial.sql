@@ -173,7 +173,7 @@ CREATE TABLE stock_in_records (
   remarks TEXT NULL DEFAULT NULL,
   department VARCHAR(191) NOT NULL DEFAULT '',
   created_by VARCHAR(191) NOT NULL DEFAULT '',
-  status VARCHAR(32) NOT NULL DEFAULT 'received',
+  status VARCHAR(32) NOT NULL DEFAULT 'pending',
   INDEX idx_sin_work_order (work_order_id),
   INDEX idx_sin_job_no (job_no),
   INDEX idx_sin_item (item_id),

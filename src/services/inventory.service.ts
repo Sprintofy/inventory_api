@@ -119,7 +119,7 @@ const stockIn = async (req: any) => {
     remarks: null,
     department: item.department || "",
     created_by: by(req),
-    status: "received",
+    status: "pending",
   };
   const result: any = await inventoryModel.createStockIn(insert);
   const stockInId = result.insertId;
