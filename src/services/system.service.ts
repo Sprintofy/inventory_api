@@ -4,19 +4,17 @@ import technicianModel from '../models/technician.model';
 import departmentModel from '../models/department.model';
 import catalogModel from '../models/catalog.model';
 import inventoryModel from '../models/inventory.model';
-import ticketModel from '../models/ticket.model';
 import operationsModel from '../models/operations.model';
 import systemModel from '../models/system.model';
 import {
     cleanUser, cleanTechnician, toDepartment, toSubDepartment, toCategory,
-    toSupplier, toItem, toStockIn, toStockOut, toTransaction, toTicket,
-    toIssue, toTransfer, toRequest, toActivity, toNotification, sqlDate,
+    toSupplier, toItem, toStockIn, toTransaction, toTransfer, toRequest, toActivity, toNotification, sqlDate,
 } from "./mappers";
 
 const bootstrap = async () => {
     const [
         userRows, techRows, deptRows, subRows, catRows, supRows,
-        itemRows, sinRows, soutRows, txnRows, ticketRows, issueRows,
+        itemRows, sinRows, txnRows,
         transferRows, requestRows, activityRows, notifRows,
     ] = await Promise.all([
         userModel.listAll(),
@@ -27,21 +25,12 @@ const bootstrap = async () => {
         catalogModel.listSuppliers(),
         inventoryModel.listItems(),
         inventoryModel.listStockIn(),
-        inventoryModel.listStockOut(),
         inventoryModel.listTransactions(),
-        ticketModel.listTickets(),
-        ticketModel.listAllIssues(),
         operationsModel.listTransfers(),
         operationsModel.listRequests(),
         systemModel.listActivities(),
         systemModel.listNotifications(),
     ]);
-    const issuesByTicket = new Map<string, any[]>();
-    for (const r of issueRows as any[]) {
-        const list = issuesByTicket.get(r.ticket_id) || [];
-        list.push(toIssue(r));
-        issuesByTicket.set(r.ticket_id, list);
-    }
     return {
         users: (userRows as any[]).map(cleanUser),
         technicians: (techRows as any[]).map(cleanTechnician),
@@ -51,9 +40,7 @@ const bootstrap = async () => {
         suppliers: (supRows as any[]).map(toSupplier),
         items: (itemRows as any[]).map(toItem),
         stockIn: (sinRows as any[]).map(toStockIn),
-        stockOut: (soutRows as any[]).map(toStockOut),
         transactions: (txnRows as any[]).map(toTransaction),
-        tickets: (ticketRows as any[]).map((r: any) => toTicket(r, issuesByTicket.get(r.id) || [])),
         transfers: (transferRows as any[]).map(toTransfer),
         requests: (requestRows as any[]).map(toRequest),
         activities: (activityRows as any[]).map(toActivity),
@@ -93,4 +80,4 @@ export default {
     createActivity,
     listNotifications,
     markNotificationsRead,
-}
+};

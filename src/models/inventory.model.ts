@@ -23,73 +23,51 @@ class InventoryModel extends BaseModel {
     }
 
     async listStockIn(filters: any = {}) {
-        const { dateFrom, dateTo, status, supplier, search } = filters;
+        const { dateFrom, dateTo, status, search } = filters;
         let sql = "SELECT * FROM stock_in_records WHERE 1=1";
         const params: any[] = [];
         if (dateFrom) {
-            sql += " AND date >= ?";
+            sql += " AND date_in >= ?";
             params.push(dateFrom);
         }
         if (dateTo) {
-            sql += " AND date <= ?";
+            sql += " AND date_in <= ?";
             params.push(dateTo + " 23:59:59");
         }
         if (status && status !== "all") {
             sql += " AND status = ?";
             params.push(status);
         }
-        if (supplier && supplier !== "all") {
-            sql += " AND supplier = ?";
-            params.push(supplier);
-        }
         if (search) {
-            sql += " AND (item_name LIKE ? OR reference LIKE ? OR supplier LIKE ? OR created_by LIKE ?)";
+            sql += " AND (item_name LIKE ? OR work_order_id LIKE ? OR job_no LIKE ? OR department LIKE ?)";
             const like = `%${search}%`;
             params.push(like, like, like, like);
         }
-        sql += " ORDER BY date ASC";
+        sql += " ORDER BY date_in DESC";
         return await this._executeQuery(sql, params);
+    }
+
+    async getStockInById(id: any) {
+        return await this._executeQuery("SELECT * FROM stock_in_records WHERE id = ? LIMIT 1;", [id]);
     }
 
     async createStockIn(data: any) {
         return await this._executeQuery("INSERT INTO stock_in_records SET ?;", [data]);
     }
 
-    async updateStockInStatus(id: string, status: string) {
-        return await this._executeQuery("UPDATE stock_in_records SET status = ? WHERE id = ?;", [status, id]);
+    async updateStockIn(id: any, data: any) {
+        return await this._executeQuery("UPDATE stock_in_records SET ? WHERE id = ?;", [data, id]);
     }
 
-    async listStockOut(filters: any = {}) {
-        const { dateFrom, dateTo, status, search } = filters;
-        let sql = "SELECT * FROM stock_out_records WHERE 1=1";
-        const params: any[] = [];
-        if (dateFrom) {
-            sql += " AND date >= ?";
-            params.push(dateFrom);
-        }
-        if (dateTo) {
-            sql += " AND date <= ?";
-            params.push(dateTo + " 23:59:59");
-        }
-        if (status && status !== "all") {
-            sql += " AND status = ?";
-            params.push(status);
-        }
-        if (search) {
-            sql += " AND (item_name LIKE ? OR reference LIKE ? OR purpose LIKE ?)";
-            const like = `%${search}%`;
-            params.push(like, like, like);
-        }
-        sql += " ORDER BY date ASC";
-        return await this._executeQuery(sql, params);
+    async getStockInHistory(itemId: any) {
+        return await this._executeQuery("SELECT * FROM stock_in_records WHERE item_id = ? ORDER BY date_in DESC;", [itemId]);
     }
 
-    async createStockOut(data: any) {
-        return await this._executeQuery("INSERT INTO stock_out_records SET ?;", [data]);
-    }
-
-    async updateStockOutStatus(id: string, status: string) {
-        return await this._executeQuery("UPDATE stock_out_records SET status = ? WHERE id = ?;", [status, id]);
+    async stockOut(id: any, remarks: any) {
+        return await this._executeQuery(
+            "UPDATE stock_in_records SET date_out = NOW(), remarks = ?, status = 'issued' WHERE id = ?;",
+            [remarks, id],
+        );
     }
 
     async listTransactions() {
@@ -100,27 +78,8 @@ class InventoryModel extends BaseModel {
         return await this._executeQuery("INSERT INTO stock_transactions SET ?;", [data]);
     }
 
-    async getStockInHistory(itemId: string) {
-        return await this._executeQuery("SELECT * FROM stock_in_records WHERE item_id = ? ORDER BY date DESC;", [itemId]);
-    }
-
-    async getStockOutHistory(itemId: string) {
-        return await this._executeQuery("SELECT * FROM stock_out_records WHERE item_id = ? ORDER BY date DESC;", [itemId]);
-    }
-
     async findDepartmentByName(name: string) {
         return await this._executeQuery("SELECT * FROM departments WHERE name = ? LIMIT 1;", [name]);
-    }
-
-    async getLatestStockInByItemId(itemId: string) {
-        return await this._executeQuery("SELECT * FROM stock_in_records WHERE item_id = ? ORDER BY date DESC LIMIT 1;", [itemId]);
-    }
-
-    async getStockInByDepartmentAndDate(deptCode: string, date: string) {
-        return await this._executeQuery(
-            "SELECT * FROM stock_in_records WHERE id LIKE ? AND date = ? ORDER BY id ASC;",
-            [`NDA/${deptCode}/${date.slice(2, 4)}/%`, date]
-        );
     }
 }
 

@@ -3,10 +3,7 @@ USE inventory_db;
 
 DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS activities;
-DROP TABLE IF EXISTS ticket_issues;
-DROP TABLE IF EXISTS tickets;
 DROP TABLE IF EXISTS stock_transactions;
-DROP TABLE IF EXISTS stock_out_records;
 DROP TABLE IF EXISTS stock_in_records;
 DROP TABLE IF EXISTS inventory_items;
 DROP TABLE IF EXISTS requests;
@@ -142,12 +139,11 @@ CREATE TABLE inventory_items (
   id VARCHAR(32) PRIMARY KEY,
   device_name VARCHAR(191) NOT NULL,
   brand VARCHAR(191) NOT NULL DEFAULT '',
-  model_number VARCHAR(191) NOT NULL DEFAULT '',
+  type ENUM('W','C','NC') NOT NULL DEFAULT 'C',
   category VARCHAR(191) NOT NULL DEFAULT '',
   description TEXT NULL,
   specifications TEXT NULL,
   warranty_period VARCHAR(64) NULL,
-  serial_number VARCHAR(191) NULL,
   notes TEXT NULL,
   sku VARCHAR(191) NULL UNIQUE,
   supplier VARCHAR(191) NULL,
@@ -160,40 +156,29 @@ CREATE TABLE inventory_items (
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_inv_sku (sku),
   INDEX idx_inv_dept (department),
-  INDEX idx_inv_category (category)
+  INDEX idx_inv_category (category),
+  INDEX idx_inv_type (type)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE stock_in_records (
-  id VARCHAR(32) PRIMARY KEY,
-  reference VARCHAR(64) NOT NULL,
-  date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  supplier VARCHAR(191) NOT NULL DEFAULT '',
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  work_order_id VARCHAR(64) NOT NULL,
+  job_no VARCHAR(64) NOT NULL,
   item_id VARCHAR(32) NOT NULL DEFAULT '',
   item_name VARCHAR(191) NOT NULL DEFAULT '',
-  items_count INT NOT NULL DEFAULT 1,
+  product_type ENUM('W','C','NC') NOT NULL DEFAULT 'C',
   quantity INT NOT NULL DEFAULT 0,
+  date_in DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  date_out DATETIME NULL DEFAULT NULL,
+  remarks TEXT NULL DEFAULT NULL,
   department VARCHAR(191) NOT NULL DEFAULT '',
   created_by VARCHAR(191) NOT NULL DEFAULT '',
   status VARCHAR(32) NOT NULL DEFAULT 'received',
-  INDEX idx_sin_ref (reference),
+  INDEX idx_sin_work_order (work_order_id),
+  INDEX idx_sin_job_no (job_no),
   INDEX idx_sin_item (item_id),
-  INDEX idx_sin_dept (department)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE stock_out_records (
-  id VARCHAR(32) PRIMARY KEY,
-  reference VARCHAR(64) NOT NULL,
-  date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  item_id VARCHAR(32) NOT NULL DEFAULT '',
-  item_name VARCHAR(191) NOT NULL DEFAULT '',
-  recipient VARCHAR(191) NOT NULL DEFAULT '',
-  department VARCHAR(191) NOT NULL DEFAULT '',
-  purpose VARCHAR(500) NOT NULL DEFAULT '',
-  quantity INT NOT NULL DEFAULT 0,
-  status VARCHAR(32) NOT NULL DEFAULT 'issued',
-  INDEX idx_sout_ref (reference),
-  INDEX idx_sout_item (item_id),
-  INDEX idx_sout_dept (department)
+  INDEX idx_sin_dept (department),
+  INDEX idx_sin_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE stock_transactions (
@@ -212,48 +197,6 @@ CREATE TABLE stock_transactions (
   INDEX idx_txn_type (type),
   INDEX idx_txn_item (item_id),
   INDEX idx_txn_dept (department)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE tickets (
-  id VARCHAR(64) PRIMARY KEY,
-  title VARCHAR(255) NOT NULL,
-  description TEXT NULL,
-  customer VARCHAR(191) NULL,
-  category VARCHAR(191) NOT NULL DEFAULT 'General',
-  priority VARCHAR(32) NOT NULL DEFAULT 'medium',
-  department VARCHAR(191) NOT NULL DEFAULT '',
-  sub_department VARCHAR(191) NULL,
-  created_by VARCHAR(191) NOT NULL DEFAULT '',
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  status VARCHAR(32) NOT NULL DEFAULT 'open',
-  item_ids JSON NOT NULL,
-  closed_by VARCHAR(191) NULL,
-  closed_at DATETIME NULL,
-  resolution TEXT NULL,
-  technician_id VARCHAR(32) NULL,
-  technician_remark TEXT NULL,
-  completed_at DATETIME NULL,
-  submitted_at DATETIME NULL,
-  reissue_count INT NOT NULL DEFAULT 0,
-  last_reissue_note TEXT NULL,
-  INDEX idx_tkt_status (status),
-  INDEX idx_tkt_dept (department),
-  INDEX idx_tkt_tech (technician_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE ticket_issues (
-  id VARCHAR(32) PRIMARY KEY,
-  ticket_id VARCHAR(64) NOT NULL,
-  asset_id VARCHAR(64) NULL,
-  title VARCHAR(255) NOT NULL,
-  description TEXT NULL,
-  priority VARCHAR(32) NOT NULL DEFAULT 'medium',
-  status VARCHAR(32) NOT NULL DEFAULT 'open',
-  assigned_to VARCHAR(191) NULL,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  resolved_at DATETIME NULL,
-  resolution TEXT NULL,
-  INDEX idx_issue_ticket (ticket_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE transfers (

@@ -10,7 +10,6 @@ import technicianRoute from "./technician.route";
 import departmentRoute from "./department.route";
 import catalogRoute from "./catalog.route";
 import inventoryRoute from "./inventory.route";
-import ticketRoute from "./ticket.route";
 import systemRoute from "./system.route";
 
 // route use
@@ -20,7 +19,6 @@ router.use('/technicians',technicianRoute);
 router.use('/departments',departmentRoute);
 router.use('/catalog',catalogRoute);
 router.use('/inventory',inventoryRoute);
-router.use('/tickets',ticketRoute);
 router.use('/system',systemRoute);
 
 

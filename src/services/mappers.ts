@@ -124,12 +124,15 @@ export const toItem = (r: any) => ({
 
 export const toStockIn = (r: any) => ({
     id: r.id,
-    reference: r.reference,
-    date: r.date,
+    workOrderId: r.work_order_id,
+    jobNo: r.job_no,
+    dateIn: r.date_in,
+    dateOut: r.date_out ?? null,
+    remarks: r.remarks ?? null,
     supplier: r.supplier ?? "",
     itemId: r.item_id ?? "",
     itemName: r.item_name ?? "",
-    items: asNumber(r.items_count, 1),
+    productType: r.product_type ?? "C",
     quantity: asNumber(r.quantity),
     department: r.department ?? "",
     createdBy: r.created_by ?? "",

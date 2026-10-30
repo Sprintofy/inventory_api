@@ -1,10 +1,9 @@
-"use strict";
+'use strict';
 import inventoryModel from "../models/inventory.model";
 import systemModel from "../models/system.model";
 import {
   toItem,
   toStockIn,
-  toStockOut,
   toTransaction,
   toActivity,
   asNumber,
@@ -23,12 +22,12 @@ const activityRow = (a: any) => ({
   date: sqlDate(a.date),
 });
 
-const getNextStockOutId = async (): Promise<string> => {
-  const maxStockOut = await inventoryModel.getMaxId("stock_out_records", "id");
-  const maxSouNum =
-    parseInt(String(maxStockOut.maxId).replace("SOU-", "")) || 0;
-  return (maxSouNum + 1).toString().padStart(3, "0");
+const getNextStockInSeq = async (): Promise<number> => {
+  const max = await inventoryModel.getMaxId("stock_in_records", "id");
+  return (parseInt(String(max.maxId || 0)) || 0) + 1;
 };
+
+const yy = (): string => new Date().toISOString().slice(2, 4);
 
 const listItems = async () => {
   const rows: any = await inventoryModel.listItems();
@@ -42,12 +41,11 @@ const createItem = async (req: any) => {
     id: b.id,
     device_name: b.deviceName || b.device_name || "",
     brand: b.brand || "",
-    model_number: b.modelNumber || b.model_number || "",
+    type: b.type || "C",
     category: b.category || "",
     description: b.description || null,
     specifications: b.specifications || null,
     warranty_period: b.warrantyPeriod || b.warranty_period || null,
-    serial_number: b.serialNumber || b.serial_number || null,
     notes: b.notes || null,
     sku: b.sku,
     supplier: b.supplier || null,
@@ -69,21 +67,14 @@ const updateItem = async (req: any) => {
   const b = req.body || {};
   const data: any = {};
   if (b.deviceName !== undefined) data.device_name = b.deviceName;
-  if (b.device_name !== undefined) data.device_name = b.device_name;
   if (b.brand !== undefined) data.brand = b.brand;
-  if (b.modelNumber !== undefined) data.model_number = b.modelNumber;
-  if (b.model_number !== undefined) data.model_number = b.model_number;
+  if (b.type !== undefined) data.type = b.type;
   if (b.category !== undefined) data.category = b.category;
   if (b.description !== undefined) data.description = b.description || null;
   if (b.specifications !== undefined)
     data.specifications = b.specifications || null;
   if (b.warrantyPeriod !== undefined)
     data.warranty_period = b.warrantyPeriod || null;
-  if (b.warranty_period !== undefined)
-    data.warranty_period = b.warranty_period || null;
-  if (b.serialNumber !== undefined) data.serial_number = b.serialNumber || null;
-  if (b.serial_number !== undefined)
-    data.serial_number = b.serial_number || null;
   if (b.notes !== undefined) data.notes = b.notes || null;
   if (b.sku !== undefined) data.sku = b.sku;
   if (b.supplier !== undefined) data.supplier = b.supplier || null;
@@ -93,8 +84,6 @@ const updateItem = async (req: any) => {
   if (b.department !== undefined) data.department = b.department;
   if (b.subDepartment !== undefined)
     data.sub_department = b.subDepartment || null;
-  if (b.sub_department !== undefined)
-    data.sub_department = b.sub_department || null;
   data.last_updated = sqlDate(b.lastUpdated || b.last_updated || new Date());
   await inventoryModel.updateItem(id, data);
   const rows: any = await inventoryModel.findItem(id);
@@ -108,60 +97,64 @@ const stockIn = async (req: any) => {
   const item = itemRows[0];
   const qty = asNumber(item.quantity) + asNumber(b.quantity);
   const now = sqlDate(new Date());
-  const yy = now.slice(2, 4); // last 2 digits of year
+  const year = yy();
 
-  // Get department code
+  // Get department code for Work Order Id
   const deptRows: any = await inventoryModel.findDepartmentByName(
     item.department || "",
   );
   const deptCode =
     deptRows.length > 0 ? deptRows[0].code : item.department || "ADM";
 
-  // Get count of stock ins for this department today for sequence
-  const todayStr = now.slice(0, 10); // YYYY-MM-DD
-  const todayStockIns = await inventoryModel.getStockInByDepartmentAndDate(
-    deptCode,
-    todayStr,
-  );
-  const seqNum = todayStockIns.length + 1;
+  // Insert first so MySQL assigns the auto-increment id
+  const insert = {
+    work_order_id: "",
+    job_no: "",
+    item_id: item.id,
+    item_name: item.device_name,
+    product_type: item.type || "C",
+    quantity: asNumber(b.quantity),
+    date_in: now,
+    date_out: null,
+    remarks: null,
+    department: item.department || "",
+    created_by: by(req),
+    status: "received",
+  };
+  const result: any = await inventoryModel.createStockIn(insert);
+  const stockInId = result.insertId;
 
-  const stockInId = `NDA/${deptCode}/${yy}/${seqNum.toString().padStart(3, "0")}`;
+  const workOrderId = `NDA/${deptCode}/IT/${year}`;
+  const jobNo = `${item.type || "C"}/${stockInId}/${year}`;
+
+  await inventoryModel.updateStockIn(stockInId, {
+    work_order_id: workOrderId,
+    job_no: jobNo,
+  });
 
   await inventoryModel.updateItem(item.id, {
     quantity: qty,
     last_updated: now,
   });
+
   const txn = {
-    id: b.txnId || b.txn_id || `TXN-${Date.now()}`,
+    id: `TXN-${Date.now()}`,
     type: "stock-in",
-    reference: b.ref || b.reference || "",
+    reference: workOrderId,
     item_id: item.id,
     item_name: item.device_name,
     quantity: asNumber(b.quantity),
     department: item.department || "",
     to_department: null,
-    supplier: b.supplier || null,
+    supplier: null,
     created_by: by(req),
     date: now,
-    note: b.note || null,
+    note: null,
   };
   await inventoryModel.createTransaction(txn);
-  const record = {
-    id: stockInId,
-    reference: b.ref || b.reference || "",
-    date: now,
-    supplier: b.supplier || "",
-    item_id: item.id,
-    item_name: item.device_name,
-    items_count: 1,
-    quantity: asNumber(b.quantity),
-    department: item.department || "",
-    created_by: by(req),
-    status: "received",
-  };
-  await inventoryModel.createStockIn(record);
+
   const act = {
-    id: b.activityId || `ACT-${Date.now()}`,
+    id: `ACT-${Date.now()}`,
     user: by(req),
     action: "received stock",
     module: "Stock In",
@@ -170,61 +163,64 @@ const stockIn = async (req: any) => {
     date: now,
   };
   await systemModel.createActivity(activityRow(act));
+
   const updated: any = await inventoryModel.findItem(item.id);
+  const record: any = await inventoryModel.getStockInById(stockInId);
   return {
     item: toItem(updated[0]),
     transaction: toTransaction(txn),
-    record: toStockIn(record),
+    record: toStockIn(record[0]),
     activity: toActivity(act),
   };
 };
 
 const stockOut = async (req: any) => {
   const b = req.body || {};
-  const itemRows: any = await inventoryModel.findItem(b.itemId || b.item_id);
+  const id = b.id || b.stockInId;
+  if (!id) throw new Error("Stock in record id is required");
+  const remarks = b.remarks || b.remark || "";
+
+  const rows: any = await inventoryModel.getStockInById(id);
+  if (rows.length === 0) throw new Error("Stock in record not found");
+  const record = rows[0];
+
+  const itemRows: any = await inventoryModel.findItem(record.item_id);
   if (itemRows.length === 0) throw new Error("Item not found");
   const item = itemRows[0];
-  if (asNumber(b.quantity) > asNumber(item.quantity))
-    throw new Error(`Insufficient stock — only ${item.quantity} available`);
-  const qty = Math.max(0, asNumber(item.quantity) - asNumber(b.quantity));
-  const now = sqlDate(new Date());
 
+  if (asNumber(record.quantity) > asNumber(item.quantity)) {
+    throw new Error(
+      `Insufficient stock — only ${item.quantity} available`,
+    );
+  }
+
+  const now = sqlDate(new Date());
+  const qty = Math.max(0, asNumber(item.quantity) - asNumber(record.quantity));
+
+  await inventoryModel.stockOut(id, remarks);
   await inventoryModel.updateItem(item.id, {
     quantity: qty,
     last_updated: now,
   });
 
-  const stockOutId = b.id;
   const txn = {
-    id: stockOutId,
+    id: `TXN-${Date.now()}`,
     type: "stock-out",
-    reference: b.ref || b.reference || "",
+    reference: record.work_order_id || "",
     item_id: item.id,
     item_name: item.device_name,
-    quantity: -asNumber(b.quantity),
+    quantity: -asNumber(record.quantity),
     department: item.department || "",
     to_department: null,
     supplier: null,
     created_by: by(req),
     date: now,
-    note: b.note || null,
+    note: remarks || null,
   };
   await inventoryModel.createTransaction(txn);
-  const record = {
-    id: b.recordId || b.record_id || stockOutId,
-    reference: b.ref || b.reference || "",
-    date: now,
-    item_id: item.id,
-    item_name: item.device_name,
-    recipient: b.recipient || "",
-    department: item.department || "",
-    purpose: b.purpose || "",
-    quantity: asNumber(b.quantity),
-    status: "issued",
-  };
-  await inventoryModel.createStockOut(record);
+
   const act = {
-    id: b.activityId || `ACT-${Date.now()}`,
+    id: `ACT-${Date.now()}`,
     user: by(req),
     action: "issued stock",
     module: "Stock Out",
@@ -233,11 +229,13 @@ const stockOut = async (req: any) => {
     date: now,
   };
   await systemModel.createActivity(activityRow(act));
+
   const updated: any = await inventoryModel.findItem(item.id);
+  const outRecord: any = await inventoryModel.getStockInById(id);
   return {
     item: toItem(updated[0]),
     transaction: toTransaction(txn),
-    record: toStockOut(record),
+    record: toStockIn(outRecord[0]),
     activity: toActivity(act),
   };
 };
@@ -248,50 +246,21 @@ const listStockIn = async (req: any) => {
     dateFrom: q.dateFrom,
     dateTo: q.dateTo,
     status: q.status,
-    supplier: q.supplier,
     search: q.search,
   };
-  const rows: any = await inventoryModel.listStockIn(filters);
-  return rows.map(toStockIn);
+  const data = await inventoryModel.listStockIn(filters);
+  return data.map(toStockIn);
 };
 
-const listStockOut = async (req: any) => {
+const getStockInHistory = async (req: any) => {
   const q = req.query || {};
-  const filters = {
-    dateFrom: q.dateFrom,
-    dateTo: q.dateTo,
-    status: q.status,
-    search: q.search,
-  };
-  const rows: any = await inventoryModel.listStockOut(filters);
-  return rows.map(toStockOut);
+  const data = await inventoryModel.getStockInHistory(q.itemId);
+  return data.map(toStockIn);
 };
 
 const listTransactions = async () => {
   const rows: any = await inventoryModel.listTransactions();
   return rows.map(toTransaction);
-};
-
-const setStockInStatus = async (req: any) => {
-  const b = req.body || {};
-  await inventoryModel.updateStockInStatus(req.params.id, b.status);
-  return { id: req.params.id, status: b.status };
-};
-
-const setStockOutStatus = async (req: any) => {
-  const b = req.body || {};
-  await inventoryModel.updateStockOutStatus(req.params.id, b.status);
-  return { id: req.params.id, status: b.status };
-};
-
-const getStockInHistory = async (req: any) => {
-  const rows: any = await inventoryModel.getStockInHistory(req.query.itemId);
-  return rows.map(toStockIn);
-};
-
-const getStockOutHistory = async (req: any) => {
-  const rows: any = await inventoryModel.getStockOutHistory(req.query.itemId);
-  return rows.map(toStockOut);
 };
 
 export default {
@@ -301,10 +270,6 @@ export default {
   stockIn,
   stockOut,
   listStockIn,
-  listStockOut,
-  listTransactions,
-  setStockInStatus,
-  setStockOutStatus,
   getStockInHistory,
-  getStockOutHistory,
+  listTransactions,
 };
