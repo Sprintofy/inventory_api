@@ -111,14 +111,19 @@ INSERT INTO `categories` (
   `color`,
   `created_at`
 ) VALUES
-  ('CAT-001', 'Computers', 'Desktop and laptop computers', 0, '#4f46e5', CURRENT_TIMESTAMP),
-  ('CAT-002', 'Printers', 'Printers and scanners', 0, '#0ea5e9', CURRENT_TIMESTAMP),
-  ('CAT-003', 'Networking', 'Routers, switches, and cabling', 0, '#10b981', CURRENT_TIMESTAMP),
-  ('CAT-004', 'Peripherals', 'Keyboards, mice, and monitors', 0, '#f59e0b', CURRENT_TIMESTAMP),
-  ('CAT-005', 'Consumables', 'Ink, toner, and other consumables', 0, '#ef4444', CURRENT_TIMESTAMP),
-  ('CAT-006', 'Accessories', 'Cables, adapters, and accessories', 0, '#8b5cf6', CURRENT_TIMESTAMP),
-  ('CAT-007', 'Servers', 'Server hardware and storage', 0, '#14b8a6', CURRENT_TIMESTAMP),
-  ('CAT-008', 'Other', 'Miscellaneous inventory items', 0, '#6366f1', CURRENT_TIMESTAMP);
+  ('CAT-V6Y878', 'CPU', 'CPU', 0, '#4f46e5', CURRENT_TIMESTAMP),
+  ('CAT-K90XSF', 'PRINTER', 'PRINTER', 0, '#0ea5e9', CURRENT_TIMESTAMP),
+  ('CAT-WS9Z15', 'UPS', 'UPS', 0, '#ef4444', CURRENT_TIMESTAMP),
+  ('CAT-MQO9D1', 'PROJECTOR', 'PROJECTOR', 0, '#f59e0b', CURRENT_TIMESTAMP),
+  ('CAT-XO426R', 'MONITOR', 'MONITOR', 0, '#10b981', CURRENT_TIMESTAMP),
+  ('CAT-84GSO2', 'KEYBOARD', 'KEYBOARD', 0, '#f59e0b', CURRENT_TIMESTAMP),
+  ('CAT-CLCKZI', 'MOUSE', 'MOUSE', 0, '#10b981', CURRENT_TIMESTAMP),
+  ('CAT-T3OJWS', 'THINCLIENT INP', 'THINCLIENT INP', 0, '#8b5cf6', CURRENT_TIMESTAMP),
+  ('CAT-U4K3RK', 'HLBS', 'HLBS', 0, '#14b8a6', CURRENT_TIMESTAMP),
+  ('CAT-ZEYGI8', 'ADAPTOR ALL TYPES', 'ADAPTOR ALL TYPES', 0, '#0ea5e9', CURRENT_TIMESTAMP),
+  ('CAT-FJTD4S', 'DELL LAPTOP', 'DELL LAPTOP', 0, '#4f46e5', CURRENT_TIMESTAMP),
+  ('CAT-F1RZQL', 'HP THINCLIENT LAPTOP', 'HP THINCLIENT LAPTOP', 0, '#6366f1', CURRENT_TIMESTAMP),
+  ('CAT-BDK2AP', 'MISC', 'MISC', 0, '#ef4444', CURRENT_TIMESTAMP);
 
 CREATE TABLE suppliers (
   id VARCHAR(32) PRIMARY KEY,
