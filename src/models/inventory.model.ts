@@ -63,10 +63,10 @@ class InventoryModel extends BaseModel {
         return await this._executeQuery("SELECT * FROM stock_in_records WHERE item_id = ? ORDER BY date_in DESC;", [itemId]);
     }
 
-    async stockOut(id: any, remarks: any) {
+    async stockOut(id: any, remarks: any, technicianName: any, secIcName: any) {
         return await this._executeQuery(
-            "UPDATE stock_in_records SET date_out = NOW(), remarks = ?, status = 'Sent' WHERE id = ?;",
-            [remarks, id],
+            "UPDATE stock_in_records SET date_out = NOW(), remarks = ?, technician_name = ?, sec_ic_name = ?, status = 'Stock Out' WHERE id = ?;",
+            [remarks, technicianName, secIcName, id],
         );
     }
 

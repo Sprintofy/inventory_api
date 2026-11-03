@@ -124,6 +124,8 @@ export const toStockIn = (r: any) => ({
     dateOut: r.date_out ?? null,
     remarks: r.remarks ?? null,
     defect: r.defect ?? null,
+    technicianName: r.technician_name ?? null,
+    secIcName: r.sec_ic_name ?? null,
     supplier: r.supplier ?? "",
     itemId: r.item_id ?? "",
     itemName: r.item_name ?? "",

@@ -152,6 +152,8 @@ CREATE TABLE stock_in_records (
   date_out DATETIME NULL DEFAULT NULL,
   remarks TEXT NULL DEFAULT NULL,
   defect TEXT NULL DEFAULT NULL,
+  technician_name TEXT NULL DEFAULT NULL,
+  sec_ic_name TEXT NULL DEFAULT NULL,
   department VARCHAR(191) NOT NULL DEFAULT '',
   created_by VARCHAR(191) NOT NULL DEFAULT '',
   status VARCHAR(32) NOT NULL DEFAULT 'pending',

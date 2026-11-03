@@ -167,6 +167,8 @@ const stockOut = async (req: any) => {
   const id = b.id || b.stockInId;
   if (!id) throw new Error("Stock in record id is required");
   const remarks = b.remarks || b.remark || "";
+  const technicianName = b.technicianName || b.technician_name || "";
+  const secIcName = b.secIcName || b.sec_ic_name || "";
 
   const rows: any = await inventoryModel.getStockInById(id);
   if (rows.length === 0) throw new Error("Stock in record not found");
@@ -185,7 +187,7 @@ const stockOut = async (req: any) => {
   const now = sqlDate(new Date());
   const qty = Math.max(0, asNumber(item.quantity) - asNumber(record.quantity));
 
-  await inventoryModel.stockOut(id, remarks);
+  await inventoryModel.stockOut(id, remarks, technicianName, secIcName);
   await inventoryModel.updateItem(item.id, {
     quantity: qty,
     last_updated: now,
