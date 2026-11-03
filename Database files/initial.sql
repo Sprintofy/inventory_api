@@ -103,6 +103,23 @@ CREATE TABLE categories (
   INDEX idx_cat_name (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+INSERT INTO `categories` (
+  `id`,
+  `name`,
+  `description`,
+  `items_count`,
+  `color`,
+  `created_at`
+) VALUES
+  ('CAT-001', 'Computers', 'Desktop and laptop computers', 0, '#4f46e5', CURRENT_TIMESTAMP),
+  ('CAT-002', 'Printers', 'Printers and scanners', 0, '#0ea5e9', CURRENT_TIMESTAMP),
+  ('CAT-003', 'Networking', 'Routers, switches, and cabling', 0, '#10b981', CURRENT_TIMESTAMP),
+  ('CAT-004', 'Peripherals', 'Keyboards, mice, and monitors', 0, '#f59e0b', CURRENT_TIMESTAMP),
+  ('CAT-005', 'Consumables', 'Ink, toner, and other consumables', 0, '#ef4444', CURRENT_TIMESTAMP),
+  ('CAT-006', 'Accessories', 'Cables, adapters, and accessories', 0, '#8b5cf6', CURRENT_TIMESTAMP),
+  ('CAT-007', 'Servers', 'Server hardware and storage', 0, '#14b8a6', CURRENT_TIMESTAMP),
+  ('CAT-008', 'Other', 'Miscellaneous inventory items', 0, '#6366f1', CURRENT_TIMESTAMP);
+
 CREATE TABLE suppliers (
   id VARCHAR(32) PRIMARY KEY,
   name VARCHAR(191) NOT NULL,
