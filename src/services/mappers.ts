@@ -106,8 +106,6 @@ export const toItem = (r: any) => ({
     brand: r.brand ?? "",
     type: r.type ?? "C",
     category: r.category ?? "",
-    description: r.description ?? undefined,
-    specifications: r.specifications ?? undefined,
     notes: r.notes ?? undefined,
     sku: r.sku,
     quantity: asNumber(r.quantity),

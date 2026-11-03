@@ -43,8 +43,6 @@ const createItem = async (req: any) => {
     brand: b.brand || "",
     type: b.type || "C",
     category: b.category || "",
-    description: b.description || null,
-    specifications: b.specifications || null,
     notes: b.notes || null,
     sku: b.sku,
     quantity: asNumber(b.quantity),
@@ -68,9 +66,6 @@ const updateItem = async (req: any) => {
   if (b.brand !== undefined) data.brand = b.brand;
   if (b.type !== undefined) data.type = b.type;
   if (b.category !== undefined) data.category = b.category;
-  if (b.description !== undefined) data.description = b.description || null;
-  if (b.specifications !== undefined)
-    data.specifications = b.specifications || null;
   if (b.notes !== undefined) data.notes = b.notes || null;
   if (b.sku !== undefined) data.sku = b.sku;
   if (b.quantity !== undefined) data.quantity = asNumber(b.quantity);

@@ -9,10 +9,5 @@ router.post('/', departmentController.createDepartment);
 router.put('/:id', departmentController.updateDepartment);
 router.delete('/:id', departmentController.removeDepartment);
 
-router.get('/subs/all', departmentController.listSubs);
-router.post('/subs', departmentController.createSub);
-router.put('/subs/:id', departmentController.updateSub);
-router.delete('/subs/:id', departmentController.removeSub);
-
 
 export default router;

@@ -7,20 +7,19 @@ import inventoryModel from '../models/inventory.model';
 import operationsModel from '../models/operations.model';
 import systemModel from '../models/system.model';
 import {
-    cleanUser, cleanTechnician, toDepartment, toSubDepartment, toCategory,
+    cleanUser, cleanTechnician, toDepartment, toCategory,
     toSupplier, toItem, toStockIn, toTransaction, toTransfer, toRequest, toActivity, toNotification, sqlDate,
 } from "./mappers";
 
 const bootstrap = async () => {
     const [
-        userRows, techRows, deptRows, subRows, catRows, supRows,
+        userRows, techRows, deptRows, catRows, supRows,
         itemRows, sinRows, txnRows,
         transferRows, requestRows, activityRows, notifRows,
     ] = await Promise.all([
         userModel.listAll(),
         technicianModel.listAll(),
         departmentModel.listDepartments(),
-        departmentModel.listSubDepartments(),
         catalogModel.listCategories(),
         catalogModel.listSuppliers(),
         inventoryModel.listItems(),
@@ -35,7 +34,6 @@ const bootstrap = async () => {
         users: (userRows as any[]).map(cleanUser),
         technicians: (techRows as any[]).map(cleanTechnician),
         departments: (deptRows as any[]).map(toDepartment),
-        subs: (subRows as any[]).map(toSubDepartment),
         categories: (catRows as any[]).map(toCategory),
         suppliers: (supRows as any[]).map(toSupplier),
         items: (itemRows as any[]).map(toItem),

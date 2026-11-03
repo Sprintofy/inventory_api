@@ -93,21 +93,6 @@ CREATE TABLE departments (
   INDEX idx_dept_name (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE sub_departments (
-  id VARCHAR(32) PRIMARY KEY,
-  department_id VARCHAR(32) NOT NULL,
-  parent_sub_id VARCHAR(32) NULL,
-  name VARCHAR(191) NOT NULL,
-  code VARCHAR(64) NOT NULL DEFAULT '',
-  manager VARCHAR(191) NOT NULL DEFAULT '',
-  users_count INT NOT NULL DEFAULT 0,
-  status VARCHAR(16) NOT NULL DEFAULT 'active',
-  color VARCHAR(16) NOT NULL DEFAULT '#4f46e5',
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  INDEX idx_sub_dept (department_id),
-  INDEX idx_sub_parent (parent_sub_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 CREATE TABLE categories (
   id VARCHAR(32) PRIMARY KEY,
   name VARCHAR(191) NOT NULL,
@@ -141,8 +126,6 @@ CREATE TABLE inventory_items (
   brand VARCHAR(191) NOT NULL DEFAULT '',
   type ENUM('W','C','NC') NOT NULL DEFAULT 'C',
   category VARCHAR(191) NOT NULL DEFAULT '',
-  description TEXT NULL,
-  specifications TEXT NULL,
   notes TEXT NULL,
   sku VARCHAR(191) NULL UNIQUE,
   quantity INT NOT NULL DEFAULT 0,

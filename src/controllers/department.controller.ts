@@ -28,8 +28,4 @@ export default {
     createDepartment: run(departmentService.createDepartment),
     updateDepartment: run(departmentService.updateDepartment),
     removeDepartment: run(departmentService.removeDepartment),
-    listSubs: run(departmentService.listSubs),
-    createSub: run(departmentService.createSub),
-    updateSub: run(departmentService.updateSub),
-    removeSub: run(departmentService.removeSub),
-}
+};
