@@ -46,7 +46,6 @@ const createItem = async (req: any) => {
     notes: b.notes || null,
     sku: b.sku,
     quantity: asNumber(b.quantity),
-    unit: b.unit || "unit",
     status: b.status || "active",
     department: b.department || "",
     cpu_type: b.cpuType || null,
@@ -69,7 +68,6 @@ const updateItem = async (req: any) => {
   if (b.notes !== undefined) data.notes = b.notes || null;
   if (b.sku !== undefined) data.sku = b.sku;
   if (b.quantity !== undefined) data.quantity = asNumber(b.quantity);
-  if (b.unit !== undefined) data.unit = b.unit;
   if (b.status !== undefined) data.status = b.status;
   if (b.department !== undefined) data.department = b.department;
   if (b.cpuType !== undefined) data.cpu_type = b.cpuType || null;

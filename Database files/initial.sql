@@ -129,7 +129,6 @@ CREATE TABLE inventory_items (
   notes TEXT NULL,
   sku VARCHAR(191) NULL UNIQUE,
   quantity INT NOT NULL DEFAULT 0,
-  unit VARCHAR(32) NOT NULL DEFAULT 'unit',
   status VARCHAR(32) NOT NULL DEFAULT 'active',
   department VARCHAR(191) NOT NULL DEFAULT '',
   cpu_type ENUM('CAN','NCAN','SA') NULL,

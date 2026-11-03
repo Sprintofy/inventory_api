@@ -109,7 +109,6 @@ export const toItem = (r: any) => ({
     notes: r.notes ?? undefined,
     sku: r.sku,
     quantity: asNumber(r.quantity),
-    unit: r.unit ?? "unit",
     status: r.status,
     lastUpdated: r.last_updated,
     createdAt: r.created_at,
