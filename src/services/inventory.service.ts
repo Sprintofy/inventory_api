@@ -82,7 +82,9 @@ const stockIn = async (req: any) => {
   const itemRows: any = await inventoryModel.findItem(b.itemId || b.item_id);
   if (itemRows.length === 0) throw new Error("Item not found");
   const item = itemRows[0];
-  const qty = asNumber(item.quantity) + asNumber(b.quantity);
+  const inQty = asNumber(b.quantity);
+  if (!inQty || inQty <= 0) throw new Error("Quantity must be a positive number");
+  const qty = asNumber(item.quantity) + inQty;
   const now = sqlDate(new Date());
   const year = yy();
 
@@ -173,6 +175,10 @@ const stockOut = async (req: any) => {
   const rows: any = await inventoryModel.getStockInById(id);
   if (rows.length === 0) throw new Error("Stock in record not found");
   const record = rows[0];
+
+  if (record.status === "Stock Out") {
+    throw new Error("This stock-in record has already been issued");
+  }
 
   const itemRows: any = await inventoryModel.findItem(record.item_id);
   if (itemRows.length === 0) throw new Error("Item not found");
