@@ -37,6 +37,14 @@ const listItems = async () => {
 const createItem = async (req: any) => {
   const b = req.body || {};
   const now = sqlDate(new Date());
+  const sku = (b.sku || b.deviceName || "").trim();
+  if (!sku) throw new Error("Reg No. is required");
+
+  const existing = await inventoryModel.findItemBySku(sku);
+  if (existing.length > 0) {
+    throw new Error(`Reg No. "${sku}" already exists. Please use a different Reg No.`);
+  }
+
   const row = {
     id: b.id,
     device_name: b.deviceName || b.device_name || "",
@@ -44,7 +52,7 @@ const createItem = async (req: any) => {
     type: b.type || "C",
     category: b.category || "",
     notes: b.notes || null,
-    sku: b.sku,
+    sku: sku,
     quantity: asNumber(b.quantity),
     status: b.status || "active",
     department: b.department || "",

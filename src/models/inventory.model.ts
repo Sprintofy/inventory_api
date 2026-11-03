@@ -14,6 +14,10 @@ class InventoryModel extends BaseModel {
         return await this._executeQuery("SELECT * FROM inventory_items WHERE id = ? LIMIT 1;", [id]);
     }
 
+    async findItemBySku(sku: string) {
+        return await this._executeQuery("SELECT * FROM inventory_items WHERE sku = ? LIMIT 1;", [sku]);
+    }
+
     async createItem(data: any) {
         return await this._executeQuery("INSERT INTO inventory_items SET ?;", [data]);
     }
