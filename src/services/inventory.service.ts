@@ -45,15 +45,13 @@ const createItem = async (req: any) => {
     category: b.category || "",
     description: b.description || null,
     specifications: b.specifications || null,
-    warranty_period: b.warrantyPeriod || b.warranty_period || null,
     notes: b.notes || null,
     sku: b.sku,
-    supplier: b.supplier || null,
     quantity: asNumber(b.quantity),
     unit: b.unit || "unit",
     status: b.status || "active",
     department: b.department || "",
-    sub_department: b.subDepartment || b.sub_department || null,
+    cpu_type: b.cpuType || null,
     last_updated: sqlDate(b.lastUpdated || b.last_updated || now),
     created_at: sqlDate(b.createdAt || b.created_at || now),
   };
@@ -73,17 +71,13 @@ const updateItem = async (req: any) => {
   if (b.description !== undefined) data.description = b.description || null;
   if (b.specifications !== undefined)
     data.specifications = b.specifications || null;
-  if (b.warrantyPeriod !== undefined)
-    data.warranty_period = b.warrantyPeriod || null;
   if (b.notes !== undefined) data.notes = b.notes || null;
   if (b.sku !== undefined) data.sku = b.sku;
-  if (b.supplier !== undefined) data.supplier = b.supplier || null;
   if (b.quantity !== undefined) data.quantity = asNumber(b.quantity);
   if (b.unit !== undefined) data.unit = b.unit;
   if (b.status !== undefined) data.status = b.status;
   if (b.department !== undefined) data.department = b.department;
-  if (b.subDepartment !== undefined)
-    data.sub_department = b.subDepartment || null;
+  if (b.cpuType !== undefined) data.cpu_type = b.cpuType || null;
   data.last_updated = sqlDate(b.lastUpdated || b.last_updated || new Date());
   await inventoryModel.updateItem(id, data);
   const rows: any = await inventoryModel.findItem(id);
