@@ -1,6 +1,6 @@
 'use strict';
 import departmentModel from '../models/department.model';
-import { toDepartment, asNumber } from "./mappers";
+import { toDepartment } from "./mappers";
 
 const listDepartments = async () => {
     const rows: any = await departmentModel.listDepartments();
@@ -14,12 +14,11 @@ const createDepartment = async (req: any) => {
         name: b.name,
         code: b.code || "",
         manager: b.manager || "",
-        users_count: asNumber(b.users ?? b.users_count),
         status: b.status || "active",
         color: b.color || "#4f46e5",
     };
     await departmentModel.createDepartment(row);
-    return { ...b, users: asNumber(b.users ?? b.users_count), subDepartments: [] };
+    return { ...b, subDepartments: [] };
 };
 
 const updateDepartment = async (req: any) => {
@@ -29,8 +28,6 @@ const updateDepartment = async (req: any) => {
     if (b.name !== undefined) data.name = b.name;
     if (b.code !== undefined) data.code = b.code;
     if (b.manager !== undefined) data.manager = b.manager;
-    if (b.users !== undefined) data.users_count = asNumber(b.users);
-    if (b.users_count !== undefined) data.users_count = asNumber(b.users_count);
     if (b.status !== undefined) data.status = b.status;
     if (b.color !== undefined) data.color = b.color;
     if (Object.keys(data).length > 0) await departmentModel.updateDepartment(id, data);

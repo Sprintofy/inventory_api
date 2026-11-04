@@ -58,7 +58,6 @@ export const toDepartment = (r: any) => ({
     name: r.name,
     code: r.code,
     manager: r.manager,
-    users: asNumber(r.users_count),
     status: r.status,
     color: r.color,
     subDepartments: [],

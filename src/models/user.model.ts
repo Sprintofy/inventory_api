@@ -6,16 +6,16 @@ class UserModel extends BaseModel {
         super();
     }
 
-    async findByEmail(email: string) {
-        return await this._executeQuery("SELECT * FROM users WHERE email = ? LIMIT 1;", [email]);
+    async listAll() {
+        return await this._executeQuery("SELECT * FROM users ORDER BY name ASC;", []);
     }
 
     async findById(id: string) {
         return await this._executeQuery("SELECT * FROM users WHERE id = ? LIMIT 1;", [id]);
     }
 
-    async listAll() {
-        return await this._executeQuery("SELECT * FROM users ORDER BY name ASC;", []);
+    async findByEmail(email: string) {
+        return await this._executeQuery("SELECT * FROM users WHERE email = ? LIMIT 1;", [email]);
     }
 
     async createUser(data: any) {
@@ -31,4 +31,4 @@ class UserModel extends BaseModel {
     }
 }
 
-export default new UserModel()
+export default new UserModel();
