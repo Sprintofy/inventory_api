@@ -45,11 +45,14 @@ const createItem = async (req: any) => {
     throw new Error(`Reg No. "${sku}" already exists. Please use a different Reg No.`);
   }
 
+  const vintage = String(b.dateOfVintage ?? b.date_of_vintage ?? "").trim();
+
   const row = {
     id: b.id,
     device_name: b.deviceName || b.device_name || "",
     brand: b.brand || "",
-    type: b.type || "C",
+    type: String(b.type || "SER").trim().toUpperCase(),
+    date_of_vintage: vintage || null,
     category: b.category || "",
     notes: b.notes || null,
     sku: sku,
@@ -71,7 +74,7 @@ const updateItem = async (req: any) => {
   const data: any = {};
   if (b.deviceName !== undefined) data.device_name = b.deviceName;
   if (b.brand !== undefined) data.brand = b.brand;
-  if (b.type !== undefined) data.type = b.type;
+  if (b.type !== undefined) data.type = String(b.type).trim().toUpperCase();
   if (b.category !== undefined) data.category = b.category;
   if (b.notes !== undefined) data.notes = b.notes || null;
   if (b.sku !== undefined) data.sku = b.sku;
@@ -79,6 +82,8 @@ const updateItem = async (req: any) => {
   if (b.status !== undefined) data.status = b.status;
   if (b.department !== undefined) data.department = b.department;
   if (b.cpuType !== undefined) data.cpu_type = b.cpuType || null;
+  const vintage = b.dateOfVintage !== undefined ? b.dateOfVintage : b.date_of_vintage;
+  if (vintage !== undefined) data.date_of_vintage = String(vintage).trim() || null;
   data.last_updated = sqlDate(b.lastUpdated || b.last_updated || new Date());
   await inventoryModel.updateItem(id, data);
   const rows: any = await inventoryModel.findItem(id);
@@ -109,7 +114,7 @@ const stockIn = async (req: any) => {
     job_no: "",
     item_id: item.id,
     item_name: item.device_name,
-    product_type: item.type || "C",
+    product_type: item.type || "SER",
     quantity: asNumber(b.quantity),
     date_in: now,
     date_out: null,
@@ -123,7 +128,7 @@ const stockIn = async (req: any) => {
   const stockInId = result.insertId;
 
   const workOrderId = `NDA/${deptCode}/IT/${year}`;
-  const jobNo = `${item.type || "C"}/${stockInId}/${year}`;
+  const jobNo = `${item.type || "SER"}/${stockInId}/${year}`;
 
   await inventoryModel.updateStockIn(stockInId, {
     work_order_id: workOrderId,
