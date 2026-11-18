@@ -267,6 +267,10 @@ const listStockIn = async (req: any) => {
     dateTo: q.dateTo,
     status: q.status,
     search: q.search,
+    type: q.type,
+    maintenanceType: q.maintenanceType,
+    category: q.category,
+    department: q.department,
   };
   const data = await inventoryModel.listStockIn(filters);
   return data.map(toStockIn);
@@ -284,6 +288,9 @@ const stockTotals = async (req: any) => {
     dateFrom: q.dateFrom,
     dateTo: q.dateTo,
     department: q.department,
+    type: q.type,
+    maintenanceType: q.maintenanceType,
+    category: q.category,
   });
 };
 

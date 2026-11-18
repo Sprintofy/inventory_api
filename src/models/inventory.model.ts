@@ -34,49 +34,80 @@ class InventoryModel extends BaseModel {
     }
 
     async listStockIn(filters: any = {}) {
-        const { dateFrom, dateTo, status, search } = filters;
-        let sql = "SELECT * FROM stock_in_records WHERE 1=1";
+        const { dateFrom, dateTo, status, search, type, maintenanceType, category, department } = filters;
+        let sql =
+            "SELECT s.* FROM stock_in_records s " +
+            "LEFT JOIN inventory_items i ON i.id = s.item_id WHERE 1=1";
         const params: any[] = [];
         if (dateFrom) {
-            sql += " AND date_in >= ?";
+            sql += " AND s.date_in >= ?";
             params.push(dateFrom);
         }
         if (dateTo) {
-            sql += " AND date_in <= ?";
+            sql += " AND s.date_in <= ?";
             params.push(dateTo + " 23:59:59");
         }
         if (status && status !== "all") {
-            sql += " AND status = ?";
+            sql += " AND s.status = ?";
             params.push(status);
         }
+        if (type && type !== "all") {
+            sql += " AND i.type = ?";
+            params.push(type);
+        }
+        if (maintenanceType && maintenanceType !== "all") {
+            sql += " AND i.maintenance_type = ?";
+            params.push(maintenanceType);
+        }
+        if (category && category !== "all") {
+            sql += " AND i.category = ?";
+            params.push(category);
+        }
+        if (department && department !== "all") {
+            sql += " AND s.department = ?";
+            params.push(department);
+        }
         if (search) {
-            sql += " AND (item_name LIKE ? OR work_order_id LIKE ? OR job_no LIKE ? OR department LIKE ?)";
+            sql += " AND (s.item_name LIKE ? OR s.work_order_id LIKE ? OR s.job_no LIKE ? OR s.department LIKE ?)";
             const like = `%${search}%`;
             params.push(like, like, like, like);
         }
-        sql += " ORDER BY date_in DESC";
+        sql += " ORDER BY s.date_in DESC";
         return await this._executeQuery(sql, params);
     }
 
     async stockTotals(filters: any = {}) {
-        const { dateFrom, dateTo, department } = filters;
+        const { dateFrom, dateTo, department, type, maintenanceType, category } = filters;
         const params: any[] = [];
         let sql =
             "SELECT " +
-            "COALESCE(SUM(CASE WHEN type = 'stock-in' THEN quantity ELSE 0 END), 0) AS total_in, " +
-            "COALESCE(SUM(CASE WHEN type = 'stock-out' THEN ABS(quantity) ELSE 0 END), 0) AS total_out " +
-            "FROM stock_transactions WHERE 1=1";
+            "COALESCE(SUM(CASE WHEN t.type = 'stock-in' THEN t.quantity ELSE 0 END), 0) AS total_in, " +
+            "COALESCE(SUM(CASE WHEN t.type = 'stock-out' THEN ABS(t.quantity) ELSE 0 END), 0) AS total_out " +
+            "FROM stock_transactions t " +
+            "LEFT JOIN inventory_items i ON i.id = t.item_id WHERE 1=1";
         if (dateFrom) {
-            sql += " AND date >= ?";
+            sql += " AND t.date >= ?";
             params.push(dateFrom);
         }
         if (dateTo) {
-            sql += " AND date <= ?";
+            sql += " AND t.date <= ?";
             params.push(dateTo + " 23:59:59");
         }
         if (department && department !== "all") {
-            sql += " AND department = ?";
+            sql += " AND t.department = ?";
             params.push(department);
+        }
+        if (type && type !== "all") {
+            sql += " AND i.type = ?";
+            params.push(type);
+        }
+        if (maintenanceType && maintenanceType !== "all") {
+            sql += " AND i.maintenance_type = ?";
+            params.push(maintenanceType);
+        }
+        if (category && category !== "all") {
+            sql += " AND i.category = ?";
+            params.push(category);
         }
         const rows: any = await this._executeQuery(sql, params);
         return {
