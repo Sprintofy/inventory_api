@@ -51,7 +51,7 @@ const createItem = async (req: any) => {
     id: b.id,
     device_name: b.deviceName || b.device_name || "",
     brand: b.brand || "",
-    type: String(b.type || "SER").trim().toUpperCase(),
+    type: String(b.type || "C").trim().toUpperCase(),
     date_of_vintage: vintage || null,
     category: b.category || "",
     notes: b.notes || null,
@@ -114,7 +114,7 @@ const stockIn = async (req: any) => {
     job_no: "",
     item_id: item.id,
     item_name: item.device_name,
-    product_type: item.type || "SER",
+    product_type: item.type || "C",
     quantity: asNumber(b.quantity),
     date_in: now,
     date_out: null,
@@ -128,7 +128,7 @@ const stockIn = async (req: any) => {
   const stockInId = result.insertId;
 
   const workOrderId = `NDA/${deptCode}/IT/${year}`;
-  const jobNo = `${item.type || "SER"}/${stockInId}/${year}`;
+  const jobNo = `${item.type || "C"}/${stockInId}/${year}`;
 
   await inventoryModel.updateStockIn(stockInId, {
     work_order_id: workOrderId,
