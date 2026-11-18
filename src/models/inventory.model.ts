@@ -18,6 +18,13 @@ class InventoryModel extends BaseModel {
         return await this._executeQuery("SELECT * FROM inventory_items WHERE sku = ? LIMIT 1;", [sku]);
     }
 
+    async findOpenStockInToday(itemId: string) {
+        return await this._executeQuery(
+            "SELECT id, job_no FROM stock_in_records WHERE item_id = ? AND DATE(date_in) = CURDATE() AND date_out IS NULL AND status NOT IN ('Stock Out', 'Sent', 'cancelled') ORDER BY date_in DESC LIMIT 1;",
+            [itemId],
+        );
+    }
+
     async createItem(data: any) {
         return await this._executeQuery("INSERT INTO inventory_items SET ?;", [data]);
     }

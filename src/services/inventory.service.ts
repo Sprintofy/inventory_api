@@ -100,6 +100,14 @@ const stockIn = async (req: any) => {
   const item = itemRows[0];
   const inQty = asNumber(b.quantity);
   if (!inQty || inQty <= 0) throw new Error("Quantity must be a positive number");
+
+  const openToday: any = await inventoryModel.findOpenStockInToday(item.id);
+  if (openToday.length > 0) {
+    throw new Error(
+      `"${item.device_name}" was already stocked in today (Job ${openToday[0].job_no}) and is not stocked out yet. Stock it out before recording another stock-in.`,
+    );
+  }
+
   const qty = asNumber(item.quantity) + inQty;
   const now = sqlDate(new Date());
   const year = yy();
