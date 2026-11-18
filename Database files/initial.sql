@@ -228,6 +228,7 @@ CREATE TABLE inventory_items (
   device_name VARCHAR(191) NOT NULL,
   brand VARCHAR(191) NOT NULL DEFAULT '',
   type VARCHAR(32) NOT NULL DEFAULT 'C',
+  maintenance_type VARCHAR(32) NOT NULL DEFAULT 'SER',
   date_of_vintage VARCHAR(64) NULL,
   category VARCHAR(191) NOT NULL DEFAULT '',
   notes TEXT NULL,

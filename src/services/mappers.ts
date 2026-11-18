@@ -104,6 +104,7 @@ export const toItem = (r: any) => ({
     deviceName: r.device_name,
     brand: r.brand ?? "",
     type: r.type ?? "C",
+    maintenanceType: r.maintenance_type ?? "SER",
     dateOfVintage: r.date_of_vintage ?? undefined,
     category: r.category ?? "",
     notes: r.notes ?? undefined,

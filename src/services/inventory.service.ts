@@ -52,6 +52,7 @@ const createItem = async (req: any) => {
     device_name: b.deviceName || b.device_name || "",
     brand: b.brand || "",
     type: String(b.type || "C").trim().toUpperCase(),
+    maintenance_type: String(b.maintenanceType || "SER").trim().toUpperCase(),
     date_of_vintage: vintage || null,
     category: b.category || "",
     notes: b.notes || null,
@@ -75,6 +76,8 @@ const updateItem = async (req: any) => {
   if (b.deviceName !== undefined) data.device_name = b.deviceName;
   if (b.brand !== undefined) data.brand = b.brand;
   if (b.type !== undefined) data.type = String(b.type).trim().toUpperCase();
+  if (b.maintenanceType !== undefined)
+    data.maintenance_type = String(b.maintenanceType).trim().toUpperCase();
   if (b.category !== undefined) data.category = b.category;
   if (b.notes !== undefined) data.notes = b.notes || null;
   if (b.sku !== undefined) data.sku = b.sku;
