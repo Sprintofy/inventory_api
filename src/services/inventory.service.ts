@@ -294,6 +294,20 @@ const stockTotals = async (req: any) => {
   });
 };
 
+const stockMis = async (req: any) => {
+  const q = req.query || {};
+  return await inventoryModel.stockMis({
+    dateFrom: q.dateFrom,
+    dateTo: q.dateTo,
+    department: q.department,
+  });
+};
+
+const earliestTxnDate = async (req: any) => {
+  const q = req.query || {};
+  return await inventoryModel.earliestTransactionDate(q.department);
+};
+
 const listTransactions = async () => {
   const rows: any = await inventoryModel.listTransactions();
   return rows.map(toTransaction);
@@ -307,6 +321,8 @@ export default {
   stockOut,
   listStockIn,
   stockTotals,
+  stockMis,
+  earliestTxnDate,
   getStockInHistory,
   listTransactions,
 };

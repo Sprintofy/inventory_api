@@ -275,6 +275,7 @@ CREATE TABLE stock_transactions (
   reference VARCHAR(64) NOT NULL DEFAULT '',
   item_id VARCHAR(32) NOT NULL DEFAULT '',
   item_name VARCHAR(191) NOT NULL DEFAULT '',
+  category VARCHAR(191) NOT NULL DEFAULT '',
   quantity INT NOT NULL DEFAULT 0,
   department VARCHAR(191) NOT NULL DEFAULT '',
   to_department VARCHAR(191) NULL,
@@ -284,6 +285,7 @@ CREATE TABLE stock_transactions (
   note TEXT NULL,
   INDEX idx_txn_type (type),
   INDEX idx_txn_item (item_id),
+  INDEX idx_txn_cat (category),
   INDEX idx_txn_dept (department)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

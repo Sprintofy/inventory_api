@@ -116,6 +116,45 @@ class InventoryModel extends BaseModel {
         };
     }
 
+    async stockMis(filters: any = {}) {
+        const { dateFrom, dateTo, department } = filters;
+        const params: any[] = [];
+        let bffSql =
+            "SUM(CASE WHEN type = 'stock-in' THEN quantity ELSE -quantity END) AS bff";
+        if (dateFrom) {
+            bffSql =
+                "SUM(CASE WHEN date < ? THEN CASE WHEN type = 'stock-in' THEN quantity ELSE -quantity END ELSE 0 END) AS bff";
+            params.push(dateFrom + " 00:00:00");
+        }
+        const fromParam = dateFrom ? dateFrom + " 00:00:00" : "1970-01-01 00:00:00";
+        const toParam = dateTo ? dateTo + " 23:59:59" : "2099-12-31 23:59:59";
+        params.push(fromParam, toParam, fromParam, toParam);
+
+        let sql =
+            "SELECT category, " +
+            bffSql +
+            ", COALESCE(SUM(CASE WHEN type = 'stock-in' AND date >= ? AND date <= ? THEN quantity ELSE 0 END), 0) AS in_qty" +
+            ", COALESCE(SUM(CASE WHEN type = 'stock-out' AND date >= ? AND date <= ? THEN ABS(quantity) ELSE 0 END), 0) AS out_qty" +
+            " FROM stock_transactions WHERE 1=1";
+        if (department && department !== "all") {
+            sql += " AND department = ?";
+            params.push(department);
+        }
+        sql += " GROUP BY category";
+        return await this._executeQuery(sql, params);
+    }
+
+    async earliestTransactionDate(department?: string) {
+        const params: any[] = [];
+        let sql = "SELECT DATE(MIN(date)) AS earliest FROM stock_transactions WHERE 1=1";
+        if (department && department !== "all") {
+            sql += " AND department = ?";
+            params.push(department);
+        }
+        const rows: any = await this._executeQuery(sql, params);
+        return rows[0]?.earliest ? String(rows[0].earliest) : "";
+    }
+
     async getStockInById(id: any) {
         return await this._executeQuery("SELECT * FROM stock_in_records WHERE id = ? LIMIT 1;", [id]);
     }
