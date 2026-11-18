@@ -51,6 +51,33 @@ class InventoryModel extends BaseModel {
         return await this._executeQuery(sql, params);
     }
 
+    async stockTotals(filters: any = {}) {
+        const { dateFrom, dateTo, department } = filters;
+        const params: any[] = [];
+        let sql =
+            "SELECT " +
+            "COALESCE(SUM(CASE WHEN type = 'stock-in' THEN quantity ELSE 0 END), 0) AS total_in, " +
+            "COALESCE(SUM(CASE WHEN type = 'stock-out' THEN ABS(quantity) ELSE 0 END), 0) AS total_out " +
+            "FROM stock_transactions WHERE 1=1";
+        if (dateFrom) {
+            sql += " AND date >= ?";
+            params.push(dateFrom);
+        }
+        if (dateTo) {
+            sql += " AND date <= ?";
+            params.push(dateTo + " 23:59:59");
+        }
+        if (department && department !== "all") {
+            sql += " AND department = ?";
+            params.push(department);
+        }
+        const rows: any = await this._executeQuery(sql, params);
+        return {
+            totalIn: Number(rows[0]?.total_in || 0),
+            totalOut: Number(rows[0]?.total_out || 0),
+        };
+    }
+
     async getStockInById(id: any) {
         return await this._executeQuery("SELECT * FROM stock_in_records WHERE id = ? LIMIT 1;", [id]);
     }

@@ -270,6 +270,15 @@ const getStockInHistory = async (req: any) => {
   return data.map(toStockIn);
 };
 
+const stockTotals = async (req: any) => {
+  const q = req.query || {};
+  return await inventoryModel.stockTotals({
+    dateFrom: q.dateFrom,
+    dateTo: q.dateTo,
+    department: q.department,
+  });
+};
+
 const listTransactions = async () => {
   const rows: any = await inventoryModel.listTransactions();
   return rows.map(toTransaction);
@@ -282,6 +291,7 @@ export default {
   stockIn,
   stockOut,
   listStockIn,
+  stockTotals,
   getStockInHistory,
   listTransactions,
 };
