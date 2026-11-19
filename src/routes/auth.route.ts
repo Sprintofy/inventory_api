@@ -1,11 +1,11 @@
 'use strict';
-import express from 'express'
+import express from 'express';
 const router = express.Router();
 import authController from '../controllers/auth.controller';
+import { validate } from '../appConfigs/middleware/validation';
 
-
-router.post('/login', authController.login);
+// Login with validation
+router.post('/login', validate('login'), authController.login);
 router.get('/me', authController.me);
-
 
 export default router;

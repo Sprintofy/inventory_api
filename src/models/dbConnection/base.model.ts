@@ -34,6 +34,11 @@ class BaseModel {
     }
 
     async getMaxId(table: string, column: string): Promise<{ maxId: string | null }> {
+        // Validate table and column names to prevent SQL injection
+        // Only allow alphanumeric and underscore
+        if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(table) || !/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(column)) {
+            throw new Error('Invalid table or column name');
+        }
         const rows: any = await this._executeQuery(`SELECT MAX(${column}) as maxId FROM ${table}`, []);
         return rows[0];
     }
