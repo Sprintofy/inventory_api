@@ -84,21 +84,6 @@ export const toCategory = (r: any) => ({
     color: r.color,
 });
 
-export const toSupplier = (r: any) => ({
-    id: r.id,
-    name: r.name,
-    contactPerson: r.contact_person ?? "",
-    email: r.email ?? "",
-    phone: r.phone ?? "",
-    address: r.address ?? "",
-    categories: asArray(r.categories),
-    itemsSupplied: asNumber(r.items_supplied),
-    purchaseOrders: asNumber(r.purchase_orders),
-    totalSpend: asNumber(r.total_spend),
-    status: r.status,
-    rating: asNumber(r.rating),
-});
-
 export const toItem = (r: any) => ({
     id: r.id,
     deviceName: r.device_name,
@@ -205,36 +190,6 @@ export const toTicket = (r: any, issues: any[] = []) => ({
     lastReissueNote: r.last_reissue_note ?? undefined,
 });
 
-export const toTransfer = (r: any) => ({
-    id: r.id,
-    transferNo: r.transfer_no ?? "",
-    fromDepartment: r.from_department ?? "",
-    toDepartment: r.to_department ?? "",
-    itemId: r.item_id ?? "",
-    itemName: r.item_name ?? "",
-    quantity: asNumber(r.quantity),
-    reason: r.reason ?? "",
-    requestedBy: r.requested_by ?? "",
-    date: r.date,
-    status: r.status,
-    approvedBy: r.approved_by ?? undefined,
-    approvalDate: r.approval_date ?? undefined,
-});
-
-export const toRequest = (r: any) => ({
-    id: r.id,
-    requestedBy: r.requested_by ?? "",
-    department: r.department ?? "",
-    subDepartment: r.sub_department ?? undefined,
-    itemId: r.item_id ?? "",
-    itemName: r.item_name ?? "",
-    quantity: asNumber(r.quantity),
-    priority: r.priority,
-    date: r.date,
-    status: r.status,
-    reason: r.reason ?? undefined,
-});
-
 export const toActivity = (r: any) => ({
     id: r.id,
     user: r.user_name ?? "",
@@ -243,15 +198,6 @@ export const toActivity = (r: any) => ({
     item: r.item ?? "",
     department: r.department ?? "",
     date: r.date,
-});
-
-export const toNotification = (r: any) => ({
-    id: r.id,
-    title: r.title,
-    description: r.description ?? "",
-    date: r.date,
-    read: Number(r.is_read) === 1,
-    type: r.type,
 });
 
 export const sqlDate = (v: any): string => {

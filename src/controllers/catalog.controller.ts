@@ -28,8 +28,4 @@ export default {
     createCategory: run(catalogService.createCategory),
     updateCategory: run(catalogService.updateCategory),
     removeCategory: run(catalogService.removeCategory),
-    listSuppliers: run(catalogService.listSuppliers),
-    createSupplier: run(catalogService.createSupplier),
-    updateSupplier: run(catalogService.updateSupplier),
-    removeSupplier: run(catalogService.removeSupplier),
 }

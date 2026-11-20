@@ -9,9 +9,4 @@ router.post('/categories', validate('createCategory'), catalogController.createC
 router.put('/categories/:id', validate('updateCategory'), catalogController.updateCategory);
 router.delete('/categories/:id', validateIdParam, catalogController.removeCategory);
 
-router.get('/suppliers', catalogController.listSuppliers);
-router.post('/suppliers', catalogController.createSupplier);
-router.put('/suppliers/:id', catalogController.updateSupplier);
-router.delete('/suppliers/:id', validateIdParam, catalogController.removeSupplier);
-
 export default router;

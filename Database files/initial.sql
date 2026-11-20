@@ -206,23 +206,6 @@ INSERT INTO `categories` (
   ('CAT-F1RZQL', 'HP THINCLIENT LAPTOP', 'HP THINCLIENT LAPTOP', 0, '#6366f1', CURRENT_TIMESTAMP),
   ('CAT-BDK2AP', 'MISC', 'MISC', 0, '#ef4444', CURRENT_TIMESTAMP);
 
-CREATE TABLE suppliers (
-  id VARCHAR(32) PRIMARY KEY,
-  name VARCHAR(191) NOT NULL,
-  contact_person VARCHAR(191) NOT NULL DEFAULT '',
-  email VARCHAR(191) NOT NULL DEFAULT '',
-  phone VARCHAR(64) NOT NULL DEFAULT '',
-  address TEXT NULL,
-  categories JSON NULL,
-  items_supplied INT NOT NULL DEFAULT 0,
-  purchase_orders INT NOT NULL DEFAULT 0,
-  total_spend DECIMAL(14,2) NOT NULL DEFAULT 0,
-  status VARCHAR(16) NOT NULL DEFAULT 'active',
-  rating DECIMAL(3,2) NOT NULL DEFAULT 0,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  INDEX idx_sup_name (name)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 CREATE TABLE inventory_items (
   id VARCHAR(32) PRIMARY KEY,
   device_name VARCHAR(191) NOT NULL,
@@ -289,37 +272,6 @@ CREATE TABLE stock_transactions (
   INDEX idx_txn_dept (department)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE transfers (
-  id VARCHAR(32) PRIMARY KEY,
-  transfer_no VARCHAR(64) NOT NULL DEFAULT '',
-  from_department VARCHAR(191) NOT NULL DEFAULT '',
-  to_department VARCHAR(191) NOT NULL DEFAULT '',
-  item_id VARCHAR(32) NOT NULL DEFAULT '',
-  item_name VARCHAR(191) NOT NULL DEFAULT '',
-  quantity INT NOT NULL DEFAULT 0,
-  reason TEXT NULL,
-  requested_by VARCHAR(191) NOT NULL DEFAULT '',
-  date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  status VARCHAR(32) NOT NULL DEFAULT 'pending',
-  approved_by VARCHAR(191) NULL,
-  approval_date DATETIME NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE requests (
-  id VARCHAR(64) PRIMARY KEY,
-  requested_by VARCHAR(191) NOT NULL DEFAULT '',
-  department VARCHAR(191) NOT NULL DEFAULT '',
-  sub_department VARCHAR(191) NULL,
-  item_id VARCHAR(32) NOT NULL DEFAULT '',
-  item_name VARCHAR(191) NOT NULL DEFAULT '',
-  quantity INT NOT NULL DEFAULT 0,
-  priority VARCHAR(32) NOT NULL DEFAULT 'medium',
-  date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  status VARCHAR(32) NOT NULL DEFAULT 'pending',
-  reason TEXT NULL,
-  INDEX idx_req_dept (department)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 CREATE TABLE activities (
   id VARCHAR(32) PRIMARY KEY,
   user_name VARCHAR(191) NOT NULL DEFAULT '',
@@ -329,13 +281,4 @@ CREATE TABLE activities (
   department VARCHAR(191) NOT NULL DEFAULT '',
   date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_act_module (module)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE notifications (
-  id VARCHAR(32) PRIMARY KEY,
-  title VARCHAR(255) NOT NULL,
-  description TEXT NULL,
-  date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  is_read TINYINT(1) NOT NULL DEFAULT 0,
-  type VARCHAR(16) NOT NULL DEFAULT 'info'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

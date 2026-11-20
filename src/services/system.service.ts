@@ -4,45 +4,35 @@ import technicianModel from '../models/technician.model';
 import departmentModel from '../models/department.model';
 import catalogModel from '../models/catalog.model';
 import inventoryModel from '../models/inventory.model';
-import operationsModel from '../models/operations.model';
 import systemModel from '../models/system.model';
 import {
     cleanUser, cleanTechnician, toDepartment, toCategory,
-    toSupplier, toItem, toStockIn, toTransaction, toTransfer, toRequest, toActivity, toNotification, sqlDate,
+    toItem, toStockIn, toTransaction, toActivity, sqlDate,
 } from "./mappers";
 
 const bootstrap = async () => {
     const [
-        userRows, techRows, deptRows, catRows, supRows,
-        itemRows, sinRows, txnRows,
-        transferRows, requestRows, activityRows, notifRows,
+        userRows, techRows, deptRows, catRows,
+        itemRows, sinRows, txnRows, activityRows,
     ] = await Promise.all([
         userModel.listAll(),
         technicianModel.listAll(),
         departmentModel.listDepartments(),
         catalogModel.listCategories(),
-        catalogModel.listSuppliers(),
         inventoryModel.listItems(),
         inventoryModel.listStockIn(),
         inventoryModel.listTransactions(),
-        operationsModel.listTransfers(),
-        operationsModel.listRequests(),
         systemModel.listActivities(),
-        systemModel.listNotifications(),
     ]);
     return {
         users: (userRows as any[]).map(cleanUser),
         technicians: (techRows as any[]).map(cleanTechnician),
         departments: (deptRows as any[]).map(toDepartment),
         categories: (catRows as any[]).map(toCategory),
-        suppliers: (supRows as any[]).map(toSupplier),
         items: (itemRows as any[]).map(toItem),
         stockIn: (sinRows as any[]).map(toStockIn),
         transactions: (txnRows as any[]).map(toTransaction),
-        transfers: (transferRows as any[]).map(toTransfer),
-        requests: (requestRows as any[]).map(toRequest),
         activities: (activityRows as any[]).map(toActivity),
-        notifications: (notifRows as any[]).map(toNotification),
     };
 };
 
@@ -62,20 +52,8 @@ const createActivity = async (req: any) => {
     return toActivity(row);
 };
 
-const listNotifications = async () => {
-    const rows: any = await systemModel.listNotifications();
-    return rows.map(toNotification);
-};
-
-const markNotificationsRead = async () => {
-    await systemModel.markNotificationsRead();
-    return { ok: true };
-};
-
 export default {
     bootstrap,
     listActivities,
     createActivity,
-    listNotifications,
-    markNotificationsRead,
 };

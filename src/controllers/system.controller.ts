@@ -27,6 +27,4 @@ export default {
     bootstrap: run(systemService.bootstrap),
     listActivities: run(systemService.listActivities),
     createActivity: run(systemService.createActivity),
-    listNotifications: run(systemService.listNotifications),
-    markNotificationsRead: run(systemService.markNotificationsRead),
 };
