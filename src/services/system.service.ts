@@ -1,22 +1,20 @@
 'use strict';
 import userModel from '../models/user.model';
-import technicianModel from '../models/technician.model';
 import departmentModel from '../models/department.model';
 import catalogModel from '../models/catalog.model';
 import inventoryModel from '../models/inventory.model';
 import systemModel from '../models/system.model';
 import {
-    cleanUser, cleanTechnician, toDepartment, toCategory,
+    cleanUser, toDepartment, toCategory,
     toItem, toStockIn, toTransaction, toActivity, sqlDate,
 } from "./mappers";
 
 const bootstrap = async () => {
     const [
-        userRows, techRows, deptRows, catRows,
+        userRows, deptRows, catRows,
         itemRows, sinRows, txnRows, activityRows,
     ] = await Promise.all([
         userModel.listAll(),
-        technicianModel.listAll(),
         departmentModel.listDepartments(),
         catalogModel.listCategories(),
         inventoryModel.listItems(),
@@ -26,7 +24,6 @@ const bootstrap = async () => {
     ]);
     return {
         users: (userRows as any[]).map(cleanUser),
-        technicians: (techRows as any[]).map(cleanTechnician),
         departments: (deptRows as any[]).map(toDepartment),
         categories: (catRows as any[]).map(toCategory),
         items: (itemRows as any[]).map(toItem),

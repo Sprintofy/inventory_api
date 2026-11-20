@@ -34,25 +34,6 @@ export const cleanUser = (r: any) => {
     };
 };
 
-export const cleanTechnician = (r: any) => {
-    if (!r) return r;
-    const { password_hash, ...rest } = r;
-    return {
-        id: rest.id,
-        name: rest.name,
-        email: rest.email,
-        employeeId: rest.employee_id,
-        specialization: rest.specialization,
-        availability: rest.availability,
-        status: rest.status,
-        activeTickets: asNumber(rest.active_tickets),
-        resolvedTickets: asNumber(rest.resolved_tickets),
-        phone: rest.phone ?? undefined,
-        lastActive: rest.last_active ?? undefined,
-        color: rest.color ?? undefined,
-    };
-};
-
 export const toDepartment = (r: any) => ({
     id: r.id,
     name: r.name,

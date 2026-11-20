@@ -140,18 +140,6 @@ export const schemas = {
         }),
     },
 
-    // Technician validation
-    createTechnician: {
-        [Segments.BODY]: Joi.object().keys({
-            name: Joi.string().min(2).max(255).required(),
-            email: Joi.string().email().required(),
-            password: Joi.string().min(6).max(128).required(),
-            employeeId: Joi.string().min(1).max(100).required(),
-            specialization: Joi.string().min(1).max(255).required(),
-            phone: Joi.string().max(50).allow(''),
-        }),
-    },
-
     // Stock In filters validation
     stockInFilters: {
         [Segments.QUERY]: Joi.object().keys({

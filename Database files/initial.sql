@@ -12,7 +12,6 @@ DROP TABLE IF EXISTS suppliers;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS sub_departments;
 DROP TABLE IF EXISTS departments;
-DROP TABLE IF EXISTS technicians;
 DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
@@ -62,24 +61,6 @@ INSERT INTO `users` (
   '2026-10-14 17:41:29',
   CURRENT_TIMESTAMP
 );
-
-CREATE TABLE technicians (
-  id VARCHAR(32) PRIMARY KEY,
-  name VARCHAR(191) NOT NULL,
-  email VARCHAR(191) NOT NULL UNIQUE,
-  password_hash VARCHAR(255) NOT NULL,
-  employee_id VARCHAR(64) NOT NULL,
-  specialization VARCHAR(191) NOT NULL,
-  availability VARCHAR(32) NOT NULL DEFAULT 'Available',
-  status VARCHAR(16) NOT NULL DEFAULT 'Active',
-  phone VARCHAR(64) NULL,
-  color VARCHAR(16) NULL,
-  active_tickets INT NOT NULL DEFAULT 0,
-  resolved_tickets INT NOT NULL DEFAULT 0,
-  last_active VARCHAR(64) NULL,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  INDEX idx_tech_email (email)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE departments (
   id VARCHAR(32) PRIMARY KEY,
