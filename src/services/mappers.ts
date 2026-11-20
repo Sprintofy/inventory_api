@@ -156,6 +156,7 @@ export const toTransaction = (r: any) => ({
     reference: r.reference ?? "",
     itemId: r.item_id ?? "",
     itemName: r.item_name ?? "",
+    category: r.category ?? undefined,
     quantity: asNumber(r.quantity),
     department: r.department ?? "",
     toDepartment: r.to_department ?? undefined,
