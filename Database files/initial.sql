@@ -200,7 +200,7 @@ CREATE TABLE inventory_items (
   quantity INT NOT NULL DEFAULT 0,
   status VARCHAR(32) NOT NULL DEFAULT 'active',
   department VARCHAR(191) NOT NULL DEFAULT '',
-  cpu_type ENUM('CAN','NCAN','SA') NULL,
+  cpu_type ENUM('CAN','KNK','SA') NULL,
   last_updated DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_inv_sku (sku),
